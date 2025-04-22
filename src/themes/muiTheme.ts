@@ -1,9 +1,11 @@
 // src/theme/theme.ts
 import { createTheme } from '@mui/material/styles';
+// @ts-ignore
+import "@fontsource/pacifico";
 
 export const muiTheme = createTheme({
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"pacifico", "Helvetica", "Arial", sans-serif',
     h1: {
       fontSize: "2.5rem",
       fontWeight: 700,

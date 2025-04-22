@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import { TopBar } from "../components/TopBar";
 
 export const StudentHome = () => {
     return (
@@ -10,6 +11,9 @@ export const StudentHome = () => {
             height: '100vh',
             width: '100%',
             }}
-        ></Box>
+        >
+            <TopBar/>
+
+        </Box>
     );
 };
