@@ -1,5 +1,8 @@
 // src/theme/theme.ts
 import { createTheme } from "@mui/material/styles";
+// @ts-ignore
+import "@fontsource/pacifico";
+
 
 export const muiTheme = createTheme({
     typography: {

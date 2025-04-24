@@ -7,11 +7,19 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 // @ts-ignore
 import "@fontsource/inter";
+import { palette } from "../themes/jsonTheme";
 
 export function TopBar() {
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar
+                position="static"
+                sx={{
+                    backgroundColor: palette.background.default,
+                    color: palette.primary[400],
+                    fontFamily: "pacifico",
+                }}
+            >
                 <Toolbar>
                     <IconButton
                         size="large"
@@ -25,7 +33,7 @@ export function TopBar() {
                     <Typography
                         variant="h6"
                         component="div"
-                        sx={{ flexGrow: 1 }}
+                        sx={{ flexGrow: 1, fontSize: "32px " }}
                     >
                         Posta ai
                     </Typography>
@@ -34,6 +42,8 @@ export function TopBar() {
                         sx={{
                             fontFamily: "inter",
                             fontWeight: "bold",
+                            fontSize: "18px "
+
                         }}
                     >
                         Wicker Neckel
