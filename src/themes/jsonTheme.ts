@@ -16,4 +16,7 @@ export const palette = {
     accent: {
         default: "#EFBF04",
     },
+    bar: {
+      default: "#E2D3CA"
+    }
 };

@@ -1,5 +1,5 @@
-import { Box } from "@mui/material";
-import { TopBar } from "../components/TopBar";
+import { Box, Typography } from "@mui/material";
+import SideDrawer from "../components/SideDrawer";
 
 export const StudentHome = () => {
     return (
@@ -12,7 +12,10 @@ export const StudentHome = () => {
                 width: "100%",
             }}
         >
-            <TopBar />
+            <SideDrawer>
+
+            </SideDrawer>
+            {/* <TopBar /> */}
         </Box>
     );
 };
