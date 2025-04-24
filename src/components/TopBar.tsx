@@ -2,7 +2,6 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 // @ts-ignore
@@ -37,17 +36,28 @@ export function TopBar() {
                     >
                         Posta ai
                     </Typography>
-                    <Button
-                        color="inherit"
-                        sx={{
-                            fontFamily: "inter",
-                            fontWeight: "bold",
-                            fontSize: "18px "
-
-                        }}
-                    >
-                        Wicker Neckel
-                    </Button>
+                    <Box display="flex" alignItems="center">
+                        <img
+                            src="/src/assets/student_avatar.png"
+                            alt="Avatar"
+                            style={{
+                                width: "50px",
+                                height: "50px",
+                                // borderRadius: "50%",
+                                marginRight: "10px",
+                            }}
+                        />
+                        <Typography
+                            color="inherit"
+                            sx={{
+                                fontFamily: "Inter, sans-serif",
+                                fontWeight: "bold",
+                                fontSize: "18px",
+                            }}
+                        >
+                            Wicker Neckel
+                        </Typography>
+                    </Box>
                 </Toolbar>
             </AppBar>
         </Box>
