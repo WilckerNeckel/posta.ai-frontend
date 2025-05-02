@@ -1,10 +1,11 @@
-import { Paper, Typography } from "@mui/material";
+import { Paper, Typography, Divider } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useMemo } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import { Task } from "../../config/interfaces/board.interface";
 import { setActiveTask } from "../../redux/reducers/boards/boards.reducer";
 import { useAppDispatch } from "../../redux/store/store";
+import { palette } from "../../themes/jsonTheme";
 
 interface Props {
     task: Task;
@@ -56,6 +57,15 @@ export const ColumnTaskItem = ({ task, index }: Props) => {
                     >
                         {task.title}
                     </Typography>
+                    <Divider 
+                        sx={{
+                            width: "60%",
+                            backgroundColor: palette.accent.default,
+                            height: 1.5,
+                            // mt: 1,
+                            mb: 1
+                        }}
+                    />
                     <Typography
                         variant="caption"
                         fontWeight={700}
