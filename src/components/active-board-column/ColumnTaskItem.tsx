@@ -7,60 +7,69 @@ import { setActiveTask } from "../../redux/reducers/boards/boards.reducer";
 import { useAppDispatch } from "../../redux/store/store";
 
 interface Props {
-  task: Task;
-  index: number;
+    task: Task;
+    index: number;
 }
 
 const CustomPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(5),
-  cursor: "pointer",
-  "&:hover .task-title": {
-    color: theme.palette.primary.main,
-  },
+    padding: theme.spacing(2),
+    cursor: "pointer",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    "&:hover .task-title": {
+        color: theme.palette.primary.main,
+    },
 }));
 
 export const ColumnTaskItem = ({ task, index }: Props) => {
-  const subtasksCompleted = useMemo(
-    () => task.subtasks.filter((subtask) => subtask.isCompleted).length,
-    [task.subtasks]
-  );
+    const subtasksCompleted = useMemo(
+        () => task.subtasks.filter((subtask) => subtask.isCompleted).length,
+        [task.subtasks]
+    );
 
-  const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
-  const handleTaskClick = () => {
-    dispatch(setActiveTask(task));
-  };
+    const handleTaskClick = () => {
+        dispatch(setActiveTask(task));
+    };
 
-  return (
-    <Draggable draggableId={task.id} index={index}>
-      {(provided) => (
-        <CustomPaper
-          key={task.id}
-          sx={{ cursor: "pointer", my: 2, mx: 1}}
-          onClick={handleTaskClick}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-        >
-          <Typography
-            width="100%"
-            fontSize="15px"
-            overflow="hidden"
-            fontWeight={600}
-            className="task-title"
-            textOverflow="ellipsis"
-          >
-            {task.title}
-          </Typography>
-          <Typography
-            variant="caption"
-            fontWeight={700}
-            color="customGrey.main"
-          >
-            {`${subtasksCompleted} of ${task.subtasks.length} subtasks`}
-          </Typography>
-        </CustomPaper>
-      )}
-    </Draggable>
-  );
+    return (
+        <Draggable draggableId={task.id} index={index}>
+            {(provided) => (
+                <CustomPaper
+                    key={task.id}
+                    sx={{ cursor: "pointer", my: 2, mx: 1, height: 160}}
+                    onClick={handleTaskClick}
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                >
+                    <Typography
+                        width="100%"
+                        fontSize="16px"
+                        overflow="hidden"
+                        fontWeight={600}
+                        className="task-title"
+                        textOverflow="ellipsis"
+                        textAlign="center"
+                    >
+                        {task.title}
+                    </Typography>
+                    <Typography
+                        variant="caption"
+                        fontWeight={700}
+                        color="customGrey.main"
+                        mt={2}
+                        width="100%"
+                        textAlign="left"
+                        px={2}
+                    >
+                        {/* {`${subtasksCompleted} of ${task.subtasks.length} subtasks`} */}
+                        {task.description}
+                    </Typography>
+                </CustomPaper>
+            )}
+        </Draggable>
+    );
 };
