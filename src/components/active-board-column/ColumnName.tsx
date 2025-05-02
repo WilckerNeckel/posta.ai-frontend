@@ -26,8 +26,8 @@ export const ColumnName = ({
 
     return (
         <Stack
-            mb={3}
-            spacing={2}
+            mb={1}
+            // spacing={2}
             direction="row"
             minHeight="1.5rem"
             alignItems="center"
@@ -35,7 +35,7 @@ export const ColumnName = ({
             // onMouseLeave={() => setShowDragIcon(false)}
         >
             <Box
-                bgcolor={color}
+                // bgcolor={color}
                 borderRadius="50%"
                 minWidth=".9375rem"
                 minHeight=".9375rem"
@@ -64,7 +64,7 @@ export const ColumnName = ({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                     >
-                        <DragIndicator sx={{ color: "white"}} />
+                        <DragIndicator sx={{ color: "white" }} />
                     </Stack>
                 )}
             </AnimatePresence>

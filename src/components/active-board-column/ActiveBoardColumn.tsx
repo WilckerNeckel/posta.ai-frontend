@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Divider, Stack } from "@mui/material";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { Column } from "../../config/interfaces/board.interface";
 import { CustomScrollBarObject } from "../../shared/css/css.global";
@@ -20,10 +20,13 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
         <Stack
           minWidth="272px"
           maxWidth="272px"
+          borderTop={5}
+          borderColor={palette.primary[400]}
           ref={provided.innerRef}
           sx={
             {
               backgroundColor: palette.primary.main
+              
             }
           }
           {...provided.draggableProps}
@@ -34,6 +37,17 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
             isDragging={snapshot.isDragging}
             tasksLength={column.tasks.length}
             dragHandleProps={provided.dragHandleProps}
+   
+          />
+          <Divider
+            sx={{
+              width: "60%",
+              backgroundColor: palette.accent.default,
+              height: 1.8,
+              marginTop: 0,
+              marginLeft: "6%",
+              marginBottom: "16px",
+            }}
           />
           <Droppable droppableId={column.id} type={DragType.TASK}>
             {(dropProvided) => (
