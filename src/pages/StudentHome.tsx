@@ -3,12 +3,9 @@ import SideDrawer from "../components/SideDrawer";
 import { styled } from "@mui/material/styles";
 import { ActiveBoardPage } from "./ActiveBoardPage";
 
-const MainContainer = styled(Box)(({ theme }) => ({
+const MainContainer = styled(Box)(() => ({
     flexGrow: 1,
-    backgroundColor:
-        theme.palette.mode === "dark"
-            ? theme.palette.customGrey.darker
-            : theme.palette.customGrey.light,
+    backgroundColor: "transparent"
 }));
 
 export const StudentHome = () => {
@@ -24,21 +21,24 @@ export const StudentHome = () => {
             }}
         >
             <SideDrawer>
-            <Stack overflow="hidden">
-            <Box display="flex" overflow="hidden">
-                <MainContainer
-                    zIndex={2}
-                    width="100%"
-                    overflow="auto"
-                    component="main"
-                    height={{
-                        xs: "92vh",
-                        md: "90vh",
-                    }}
-                >
-                    <ActiveBoardPage />
-                </MainContainer>
-                </Box>
+                <Stack overflow="hidden">
+                    <Box
+                        display="flex"
+                        overflow="hidden"
+                    >
+                        <MainContainer
+                            zIndex={2}
+                            width="100%"
+                            overflow="auto"
+                            component="main"
+                            height={{
+                                xs: "92vh",
+                                md: "90vh",
+                            }}
+                        >
+                            <ActiveBoardPage />
+                        </MainContainer>
+                    </Box>
                 </Stack>
             </SideDrawer>
         </Box>
