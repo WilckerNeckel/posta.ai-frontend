@@ -36,7 +36,7 @@ export const ColumnTaskItem = ({ task, index }: Props) => {
       {(provided) => (
         <CustomPaper
           key={task.id}
-          sx={{ cursor: "pointer", my: 3 }}
+          sx={{ cursor: "pointer", my: 2, mx: 1}}
           onClick={handleTaskClick}
           ref={provided.innerRef}
           {...provided.draggableProps}

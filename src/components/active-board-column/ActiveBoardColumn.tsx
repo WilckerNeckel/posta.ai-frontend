@@ -18,8 +18,8 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
     <Draggable draggableId={column.id} index={index}>
       {(provided, snapshot) => (
         <Stack
-          minWidth="17.5rem"
-          maxWidth="17.5rem"
+          minWidth="272px"
+          maxWidth="272px"
           ref={provided.innerRef}
           sx={
             {
