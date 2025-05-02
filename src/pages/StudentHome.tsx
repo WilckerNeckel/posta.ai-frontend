@@ -1,5 +1,15 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import SideDrawer from "../components/SideDrawer";
+import { styled } from "@mui/material/styles";
+import { ActiveBoardPage } from "./ActiveBoardPage";
+
+const MainContainer = styled(Box)(({ theme }) => ({
+    flexGrow: 1,
+    backgroundColor:
+        theme.palette.mode === "dark"
+            ? theme.palette.customGrey.darker
+            : theme.palette.customGrey.light,
+}));
 
 export const StudentHome = () => {
     return (
@@ -10,12 +20,27 @@ export const StudentHome = () => {
                 backgroundPosition: "center",
                 height: "100vh",
                 width: "100%",
+                display: "flex",
             }}
         >
             <SideDrawer>
-
+            <Stack overflow="hidden">
+            <Box display="flex" overflow="hidden">
+                <MainContainer
+                    zIndex={2}
+                    width="100%"
+                    overflow="auto"
+                    component="main"
+                    height={{
+                        xs: "92vh",
+                        md: "90vh",
+                    }}
+                >
+                    <ActiveBoardPage />
+                </MainContainer>
+                </Box>
+                </Stack>
             </SideDrawer>
-            {/* <TopBar /> */}
         </Box>
     );
 };

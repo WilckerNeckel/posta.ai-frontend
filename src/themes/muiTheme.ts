@@ -3,7 +3,6 @@ import { createTheme } from "@mui/material/styles";
 // @ts-ignore
 import "@fontsource/pacifico";
 
-
 export const muiTheme = createTheme({
     typography: {
         fontFamily: '"pacifico", "Helvetica", "Arial", sans-serif',
@@ -33,5 +32,11 @@ export const muiTheme = createTheme({
         background: {
             default: "#E2D3CA",
         },
+
+        customGrey: {
+            darker: "#2E2E2E", // Replace with your desired color
+            light: "#F5F5F5", // Replace with your desired color
+        },
+        lines: "#CCCCCC", // Add a default lines color
     },
 });

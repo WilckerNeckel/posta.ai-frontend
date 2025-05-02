@@ -7,6 +7,7 @@ function App() {
     return (
         <>
             <CssBaseline />
+
             <ThemeProvider theme={muiTheme}>
                 <BrowserRouter>
                     <Routes>
