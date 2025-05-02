@@ -20,3 +20,8 @@ export const palette = {
       default: "#E2D3CA"
     }
 };
+
+export const fonts = {
+    primary: "pacifico",
+    secondary: "inter"
+}

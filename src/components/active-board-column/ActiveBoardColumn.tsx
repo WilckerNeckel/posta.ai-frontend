@@ -6,6 +6,7 @@ import { For } from "../utils/For";
 import { ColumnName } from "./ColumnName";
 import { ColumnTaskItem } from "./ColumnTaskItem";
 import { DragType } from "../../pages/ActiveBoardPage";
+import { palette } from "../../themes/jsonTheme";
 
 interface Props {
   column: Column;
@@ -20,6 +21,11 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
           minWidth="17.5rem"
           maxWidth="17.5rem"
           ref={provided.innerRef}
+          sx={
+            {
+              backgroundColor: palette.primary.main
+            }
+          }
           {...provided.draggableProps}
         >
           <ColumnName

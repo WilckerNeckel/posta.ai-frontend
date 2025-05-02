@@ -2,7 +2,10 @@ import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import { DragIndicator } from "@mui/icons-material";
 import { Box, Stack, Typography } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
+// @ts-ignore
+import "@fontsource/inter";
 import { useState } from "react";
+import { fonts } from "../../themes/jsonTheme";
 
 interface Props {
   name: string;
@@ -40,8 +43,9 @@ export const ColumnName = ({
       <Typography
         variant="body2"
         fontWeight={600}
+        fontFamily={fonts.secondary}
         letterSpacing={2}
-        color="customGrey.main"
+        color="white"
         sx={{ textTransform: "uppercase", flex: 1 }}
       >
         {`${name} (${tasksLength})`}
