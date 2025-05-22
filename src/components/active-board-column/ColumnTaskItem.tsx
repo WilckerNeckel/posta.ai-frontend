@@ -7,13 +7,14 @@ import { setActiveTask } from "../../redux/reducers/boards/boards.reducer";
 import { useAppDispatch } from "../../redux/store/store";
 import { palette } from "../../themes/jsonTheme";
 import brownPin from "../../assets/brown-pin.png";
+import { setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
 
 interface Props {
     task: Task;
     index: number;
 }
 
-const CustomPaper = styled(Paper)(({ theme }) => ({
+export const CustomPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(2),
     cursor: "pointer",
     display: "flex",
@@ -35,6 +36,7 @@ export const ColumnTaskItem = ({ task, index }: Props) => {
 
     const handleTaskClick = () => {
         dispatch(setActiveTask(task));
+        dispatch(setShowNewTaskModal(true));
     };
 
     return (
