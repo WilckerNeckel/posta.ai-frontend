@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -19,7 +19,9 @@ import { MyInput } from "../my-input/MyInput";
 import { If } from "../utils";
 import { StatusValues } from "./StatusValues";
 import { TaskFormSubtasks } from "./TaskFormSubtasks";
-import { fonts } from "../../themes/jsonTheme";
+import { fonts, palette } from "../../themes/jsonTheme";
+import brownPin from "../../assets/brown-pin.png";
+
 // @ts-ignore
 import "@fontsource/inter";
 
@@ -58,11 +60,31 @@ export const NewTaskForm = () => {
             onClose={closeModal}
             transitionDuration={0}
             onSubmit={methods.handleSubmit(onFormSubmitted)}
+            contentSpacing={4}
+            contentPadding={{
+              xs: 4,
+              md: 6,
+            }}
         >
+            {/* <Box
+                component="img"
+                src={brownPin}
+                alt="pin"
+                sx={{
+                    width: 60,
+                    height: 60,
+                    position: "absolute",
+                    top: -8,
+                    left: "95%",
+                    transform: "translateX(-50%)",
+                    zIndex:2
+                }}
+            /> */}
             <Typography
                 variant="h6"
                 fontWeight={700}
                 fontFamily={fonts.secondary}
+                color={palette.primary.main}
             >
                 {title}
             </Typography>

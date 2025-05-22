@@ -2,7 +2,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import { Stack, TextField, TextFieldProps, Typography } from "@mui/material";
 import { useFormContext, useFormState } from "react-hook-form";
 import React from "react";
-import { fonts } from "../../themes/jsonTheme";
+import { fonts, palette } from "../../themes/jsonTheme";
 
 
 type MyInputProps = TextFieldProps & {
@@ -31,7 +31,7 @@ export const MyInput = ({ name, customLabel, ...rest }: MyInputProps) => {
 
   const withCustomLabel = (
     <Stack spacing={2}>
-      <Typography variant="subtitle2" fontWeight={900} fontFamily= {fonts.secondary}
+      <Typography variant="subtitle2" fontWeight={900} fontFamily= {fonts.secondary} color="black"
       >
         {customLabel}
       </Typography>

@@ -27,7 +27,7 @@ export const BaseModal = ({
   const formProps = methods ? { methods, component: Form, onSubmit } : {};
 
   return (
-    <Dialog {...rest}>
+    <Dialog {...rest} PaperProps={{ style: { borderRadius: 12 } }}>
       <Stack
         p={contentPadding}
         width={contentWidth}
