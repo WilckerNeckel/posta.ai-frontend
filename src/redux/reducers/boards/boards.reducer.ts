@@ -19,12 +19,16 @@ interface InitialState {
   boards: Board[];
   activeBoard: Board | null;
   activeTask: Task | null;
+  filteredTasks: Task[];
+  isFiltered: boolean;
 }
 
 const initialState: InitialState = {
   boards: data,
   activeTask: null,
   activeBoard: null,
+  filteredTasks: [],
+  isFiltered: false,
 };
 
 export const boardsReducer = createSlice({
@@ -33,6 +37,9 @@ export const boardsReducer = createSlice({
   reducers: {
     setActiveBoard: (state, action: PayloadAction<Board | null>) => {
       state.activeBoard = action.payload;
+      // Clear filters when switching boards
+      state.filteredTasks = [];
+      state.isFiltered = false;
     },
     setActiveTask: (state, action: PayloadAction<Task | null>) => {
       state.activeTask = action.payload;
@@ -55,6 +62,9 @@ export const boardsReducer = createSlice({
 
       state.boards.unshift(board);
       state.activeBoard = board;
+      // Clear filters when adding new board
+      state.filteredTasks = [];
+      state.isFiltered = false;
     },
     deleteBoard: (state, { payload }: PayloadAction<string>) => {
       state.boards = state.boards.filter((board) => board.id !== payload);
@@ -63,6 +73,10 @@ export const boardsReducer = createSlice({
       firstBoard
         ? (state.activeBoard = firstBoard)
         : (state.activeBoard = null);
+      
+      // Clear filters when deleting board
+      state.filteredTasks = [];
+      state.isFiltered = false;
     },
     updateBoard: (state, { payload }: PayloadAction<UpdateBoardBody>) => {
       const board = state.boards.find(
@@ -279,6 +293,36 @@ export const boardsReducer = createSlice({
         board.columns = state.activeBoard.columns;
       });
     },
+    filterTasks: (state, { payload }: PayloadAction<string>) => {
+      if (!state.activeBoard) return;
+      
+      const searchTerms = payload.toLowerCase().trim().split('|').filter(term => term.length > 0);
+      
+      if (searchTerms.length === 0) {
+        // If no search terms, clear filtering
+        state.filteredTasks = [];
+        state.isFiltered = false;
+        return;
+      }
+      
+      // Collect all tasks from all columns and filter by title
+      const allTasks = state.activeBoard.columns.reduce<Task[]>(
+        (acc, column) => [...acc, ...column.tasks],
+        []
+      );
+      
+      // Use OR logic - task matches if it contains ANY of the search terms as complete phrases
+      const filtered = allTasks.filter(task => 
+        searchTerms.some(term => task.title.toLowerCase().includes(term.trim()))
+      );
+      
+      state.filteredTasks = filtered;
+      state.isFiltered = true;
+    },
+    clearFilter: (state) => {
+      state.filteredTasks = [];
+      state.isFiltered = false;
+    },
   },
 });
 
@@ -296,4 +340,6 @@ export const {
   completeSubtask,
   changeTaskStatus,
   setTaskStatusWithDrag,
+  filterTasks,
+  clearFilter
 } = boardsReducer.actions;

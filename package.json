@@ -10,41 +10,34 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@fontsource/inter": "^5.2.5",
-        "@fontsource/pacifico": "^5.2.5",
-
-        "@mui/styled-engine-sc": "^7.0.2",
-
-        "react-router-dom": "^7.5.0",
-        "styled-components": "^6.1.17",
-
         "@dnd-kit/core": "^6.0.8",
         "@dnd-kit/sortable": "^7.0.2",
         "@dnd-kit/utilities": "^3.2.1",
-        "@emotion/react": "^11.10.6",
-        "@emotion/styled": "^11.10.6",
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.0",
+        "@fontsource/inter": "^5.2.5",
+        "@fontsource/pacifico": "^5.2.5",
         "@hello-pangea/dnd": "^16.2.0",
         "@hookform/error-message": "^2.0.1",
         "@hookform/resolvers": "^3.0.0",
         "@mui/icons-material": "^5.11.11",
-        "@mui/material": "^5.11.14",
+        "@mui/material": "^5.17.1",
+        "@mui/styled-engine-sc": "^7.0.2",
         "@reduxjs/toolkit": "^1.9.3",
         "framer-motion": "^10.9.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-hook-form": "^7.43.8",
         "react-redux": "^8.0.5",
+        "react-router-dom": "^7.5.0",
         "redux-persist": "^6.0.0",
+        "styled-components": "^6.1.17",
         "yup": "^1.0.2"
     },
     "devDependencies": {
         "@eslint/js": "^9.15.0",
-        "@types/node": "^22.14.1",
-        "eslint-plugin-react-refresh": "^0.4.14",
-        "globals": "^15.12.0",
-        "typescript-eslint": "^8.15.0",
-
-
+        "@types/json-schema": "^7.0.15",
+        "@types/node": "^22.15.32",
         "@types/react": "^18.0.28",
         "@types/react-dom": "^18.0.11",
         "@types/redux-persist": "^4.3.1",
@@ -60,9 +53,11 @@
         "eslint-plugin-prettier": "^4.2.1",
         "eslint-plugin-react": "7.28.0",
         "eslint-plugin-react-hooks": "4.3.0",
+        "eslint-plugin-react-refresh": "^0.4.14",
+        "globals": "^15.12.0",
         "prettier": "^2.8.3",
         "typescript": "^4.9.3",
+        "typescript-eslint": "^8.15.0",
         "vite": "^4.2.0"
-
     }
 }

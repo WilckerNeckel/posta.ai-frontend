@@ -7,6 +7,8 @@ import { ColumnName } from "./ColumnName";
 import { ColumnTaskItem } from "./ColumnTaskItem";
 import { DragType } from "../../pages/ActiveBoardPage";
 import { palette } from "../../themes/jsonTheme";
+import { useSelector } from "react-redux";
+import { selectFilteredTasks, selectIsFiltered } from "../../redux/reducers/boards/boards.selector";
 
 interface Props {
   column: Column;
@@ -14,6 +16,16 @@ interface Props {
 }
 
 export const ActiveBoardColumn = ({ column, index }: Props) => {
+  const filteredTasks = useSelector(selectFilteredTasks);
+  const isFiltered = useSelector(selectIsFiltered);
+
+  // Filter tasks for this column when filtering is active
+  const displayTasks = isFiltered 
+    ? column.tasks.filter(task => 
+        filteredTasks.some(filteredTask => filteredTask.id === task.id)
+      )
+    : column.tasks;
+
   return (
     <Draggable draggableId={column.id} index={index}>
       {(provided, snapshot) => (
@@ -35,7 +47,7 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
             name={column.name}
             color={column.color}
             isDragging={snapshot.isDragging}
-            tasksLength={column.tasks.length}
+            tasksLength={displayTasks.length}
             dragHandleProps={provided.dragHandleProps}
    
           />
@@ -59,7 +71,7 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
                 sx={(theme) => CustomScrollBarObject({ theme, hidden: true })}
               >
                 <For
-                  each={column.tasks}
+                  each={displayTasks}
                   render={(task, taskIndex) => (
                     <ColumnTaskItem
                       task={task}

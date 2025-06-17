@@ -14,3 +14,7 @@ export const selectActiveBoardColumns = (state: RootState) =>
     key: column.id,
     value: column.name,
   })) || [];
+
+export const selectFilteredTasks = (state: RootState) => state.boards.filteredTasks;
+
+export const selectIsFiltered = (state: RootState) => state.boards.isFiltered;

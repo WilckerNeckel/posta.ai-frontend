@@ -16,9 +16,18 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { palette } from "../themes/jsonTheme";
+import { Checkbox } from "@mui/material";
+import { useAppDispatch } from "../redux/store/store";
+import {
+    filterTasks,
+    clearFilter,
+} from "../redux/reducers/boards/boards.reducer";
+import { useSelector } from "react-redux";
+import {
+    selectFilteredTasks,
+    selectIsFiltered,
+} from "../redux/reducers/boards/boards.selector";
 
 const drawerWidth = 240;
 
@@ -88,6 +97,7 @@ type DrawerLayoutProps = {
 export default function SideDrawer({ children }: DrawerLayoutProps) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const [activeFilters, setActiveFilters] = React.useState<string[]>([]);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -95,6 +105,41 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
 
     const handleDrawerClose = () => {
         setOpen(false);
+    };
+
+    const dispatch = useAppDispatch();
+    const filteredTasks = useSelector(selectFilteredTasks);
+    const isFiltered = useSelector(selectIsFiltered);
+
+    const onFilter = (checked: boolean, title: string) => {
+        if (checked) {
+            // Add filter to active filters
+            const newFilters = [...activeFilters, title];
+            setActiveFilters(newFilters);
+
+            // Apply filtering - search for tasks that match any of the active filters as complete phrases
+            const searchTerm = newFilters.join("|");
+            dispatch(filterTasks(searchTerm));
+
+            console.log(`${title} selected`);
+        } else {
+            // Remove filter from active filters
+            const newFilters = activeFilters.filter(
+                (filter) => filter !== title
+            );
+            setActiveFilters(newFilters);
+
+            if (newFilters.length === 0) {
+                // No filters active, clear filtering
+                dispatch(clearFilter());
+            } else {
+                // Apply remaining filters
+                const searchTerm = newFilters.join("|");
+                dispatch(filterTasks(searchTerm));
+            }
+
+            console.log(`${title} deselected`);
+        }
     };
 
     return (
@@ -175,35 +220,27 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List>
-                    {["Inbox", "Starred", "Send email", "Drafts"].map(
-                        (text, index) => (
-                            <ListItem key={text} disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        {index % 2 === 0 ? (
-                                            <InboxIcon />
-                                        ) : (
-                                            <MailIcon />
-                                        )}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} />
-                                </ListItemButton>
-                            </ListItem>
-                        )
-                    )}
-                </List>
                 <Divider />
                 <List>
-                    {["All mail", "Trash", "Spam"].map((text, index) => (
+                    {[
+                        "Laboratório de redes",
+                        "Banco de dados",
+                        "Matemática discreta",
+                    ].map((text, index) => (
                         <ListItem key={text} disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
-                                    {index % 2 === 0 ? (
-                                        <InboxIcon />
-                                    ) : (
-                                        <MailIcon />
-                                    )}
+                                    <Checkbox
+                                        edge="start"
+                                        tabIndex={-1}
+                                        disableRipple
+                                        onChange={(event) => {
+                                            onFilter(
+                                                event.target.checked,
+                                                text
+                                            );
+                                        }}
+                                    />
                                 </ListItemIcon>
                                 <ListItemText primary={text} />
                             </ListItemButton>
