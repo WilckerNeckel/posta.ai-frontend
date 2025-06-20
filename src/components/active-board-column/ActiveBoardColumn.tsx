@@ -84,6 +84,7 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
               </Stack>
             )}
           </Droppable>
+
         </Stack>
       )}
     </Draggable>

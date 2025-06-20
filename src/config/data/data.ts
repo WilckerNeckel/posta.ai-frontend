@@ -9,11 +9,11 @@ const completedId = nanoid();
 export const data: Board[] = [
   {
     id: nanoid(),
-    name: "Kanban Project",
+      name: "Projeto Kanban",
     columns: [
       {
         id: pendingId,
-        name: "Pending",
+        name: "Pendente",
         color: getColorByIndex(0),
         tasks: Array.from({ length: 2 }, (_, i) => ({
           title: `Task pending ${i + 1}`,
@@ -25,7 +25,7 @@ export const data: Board[] = [
       },
       {
         id: inProgressId,
-        name: "In Progress",
+        name: "Em progresso",
         color: getColorByIndex(1),
         tasks: Array.from({ length: 3 }, (_, i) => ({
           title: `Task in progress ${i + 1}`,
@@ -37,7 +37,7 @@ export const data: Board[] = [
       },
       {
         id: completedId,
-        name: "Completed",
+        name: "Concluído",
         color: getColorByIndex(2),
         tasks: Array.from({ length: 4 }, (_, i) => ({
           title: `Task completed ${i + 1}`,
