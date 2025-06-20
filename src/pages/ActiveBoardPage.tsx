@@ -4,7 +4,7 @@ import {
   DropResult,
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
-import { Box } from "@mui/material";
+import { Box, CircularProgress, Typography, Button, Alert, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import { ActiveBoardColumn } from "../components/active-board-column/ActiveBoardColumn";
@@ -41,14 +41,51 @@ const ColumnsContainer = styled(Box)(({ theme }) => ({
   ...CustomScrollBarObject({ theme }),
 }));
 
+// ============================================
+// COMPONENTES DE LOADING E ERROR
+// ============================================
+
+const LoadingContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "100vh",
+  gap: theme.spacing(3),
+}));
+
+const ErrorContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "100vh",
+  padding: theme.spacing(4),
+  maxWidth: 600,
+  margin: "0 auto",
+}));
+
 export const DragType = {
   COLUMN: "COLUMN",
   TASK: "TASK",
 };
 
+// ============================================
+// COMPONENTE PRINCIPAL ATUALIZADO
+// ============================================
+
 export const ActiveBoardPage = () => {
   const isOpen = useSelector(selectShowNewTaskModal);
-  const { activeBoard, boards } = useActiveBoardSelector();
+  
+  // 🔄 MUDANÇA: Usando estados expandidos do hook
+  const { 
+    activeBoard, 
+    boards, 
+    loading, 
+    error, 
+    appReady,
+    reloadData 
+  } = useActiveBoardSelector();
 
   const dispatch = useAppDispatch();
 
@@ -107,6 +144,83 @@ export const ActiveBoardPage = () => {
     if (result.type === DragType.COLUMN) return onDragColumn(result);
   };
 
+  // ============================================
+  // RENDERIZAÇÃO CONDICIONAL COM NOVOS ESTADOS
+  // ============================================
+
+  // 🆕 LOADING: Mostra spinner enquanto carrega
+  if (loading) {
+    return (
+      <LoadingContainer>
+        <CircularProgress size={60} />
+        <Typography variant="h6" color="textSecondary">
+          Carregando seu quadro Kanban...
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          Buscando dados da API
+        </Typography>
+      </LoadingContainer>
+    );
+  }
+
+  // 🆕 ERROR: Mostra erro com botão de retry
+  if (error) {
+    return (
+      <ErrorContainer>
+        <Alert 
+          severity="error" 
+          sx={{ width: "100%", mb: 3 }}
+          action={
+            <Button 
+              color="inherit" 
+              size="small" 
+              onClick={reloadData}
+              variant="outlined"
+            >
+              Tentar Novamente
+            </Button>
+          }
+        >
+          <Typography variant="h6" component="div" gutterBottom>
+            Erro ao carregar dados
+          </Typography>
+          <Typography variant="body2">
+            {error}
+          </Typography>
+        </Alert>
+        
+        <Stack spacing={2} alignItems="center">
+          <Typography variant="body1" color="textSecondary" textAlign="center">
+            Não foi possível carregar seus boards. Verifique sua conexão e tente novamente.
+          </Typography>
+          
+          <Button 
+            variant="contained" 
+            onClick={reloadData}
+            size="large"
+          >
+            🔄 Recarregar Dados
+          </Button>
+          
+          <Button 
+            variant="text" 
+            onClick={openNewBoardModal}
+            size="small"
+          >
+            Ou criar um novo board
+          </Button>
+        </Stack>
+      </ErrorContainer>
+    );
+  }
+
+  // ============================================
+  // RENDERIZAÇÃO NORMAL (MANTIDA IGUAL)
+  // ============================================
+  
+  // 📝 NOTA: Lógica existente mantida para compatibilidade
+  // Agora só executa quando appReady = true
+
   if (boards.length === 0) {
     return <NoBoardAlert type="no-boards" onAction={openNewBoardModal} />;
   }
@@ -119,6 +233,7 @@ export const ActiveBoardPage = () => {
     );
   }
 
+  // ✅ RENDERIZAÇÃO PRINCIPAL: Só quando dados estão prontos
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable
