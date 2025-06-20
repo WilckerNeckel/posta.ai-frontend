@@ -5,6 +5,7 @@ import { CustomScrollBarObject } from "../../shared/css/css.global";
 import { For } from "../utils/For";
 import { ColumnName } from "./ColumnName";
 import { ColumnTaskItem } from "./ColumnTaskItem";
+import { NewTaskButton } from "./NewTaskButton";
 import { DragType } from "../../pages/ActiveBoardPage";
 import { palette } from "../../themes/jsonTheme";
 import { useSelector } from "react-redux";
@@ -81,6 +82,10 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
                   )}
                 />
                 {dropProvided.placeholder}
+                <NewTaskButton 
+                  columnId={column.id}
+                  columnName={column.name}
+                />
               </Stack>
             )}
           </Droppable>

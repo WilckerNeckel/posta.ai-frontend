@@ -94,7 +94,7 @@ export const NewTaskForm = () => {
                 multiline
                 name="description"
                 customLabel="Description"
-                placeholder="e.g. It’s always good to take a break. I’ll be back in 5 minutes."
+                placeholder="e.g. It's always good to take a break. I'll be back in 5 minutes."
             />
             {/* <TaskFormSubtasks
         append={append}
@@ -102,16 +102,28 @@ export const NewTaskForm = () => {
         fields={fields}
         methods={methods}
       /> */}
-            {/* <If condition={activeTask}>
-        <StatusValues
-          status={status}
-          name="columnId"
-          defaultValue={activeTask?.status}
-        />
-      </If>
-      <If condition={!activeTask}>
-        <StatusValues status={status} name="columnId" />
-      </If> */}
+            
+            {/* ============================================ */}
+            {/* SELEÇÃO DE STATUS/COLUNA - HABILITADO      */}
+            {/* ============================================ */}
+            
+            {/* ✅ MODO EDIÇÃO: Usa status atual da task */}
+            <If condition={activeTask}>
+                <StatusValues
+                    status={status}
+                    name="columnId"
+                    defaultValue={activeTask?.status}
+                />
+            </If>
+            
+            {/* ✅ MODO CRIAÇÃO: Permite escolher coluna */}
+            <If condition={!activeTask}>
+                <StatusValues 
+                    status={status} 
+                    name="columnId" 
+                />
+            </If>
+            
             <Button 
               variant="contained" 
               type="submit" 

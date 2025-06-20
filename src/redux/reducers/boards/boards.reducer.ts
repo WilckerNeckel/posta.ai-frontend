@@ -137,6 +137,57 @@ export const loadBoardsFromAPI = createAsyncThunk(
 //   }
 // );
 
+/**
+ * 🚧 FUTURO: Criar task via API
+ * Descomente quando backend estiver pronto
+ */
+// export const createTaskAsync = createAsyncThunk(
+//   'boards/createTaskAsync',
+//   async (taskData: CreateTaskBody, { rejectWithValue }) => {
+//     try {
+//       const newTask = await BoardsService.createTask(taskData);
+//       return newTask;
+//     } catch (error) {
+//       const message = error instanceof Error ? error.message : 'Erro ao criar task';
+//       return rejectWithValue(message);
+//     }
+//   }
+// );
+
+/**
+ * 🚧 FUTURO: Atualizar task via API
+ * Descomente quando backend estiver pronto
+ */
+// export const updateTaskAsync = createAsyncThunk(
+//   'boards/updateTaskAsync',
+//   async ({ taskId, taskData }: { taskId: string; taskData: UpdateTaskBody }, { rejectWithValue }) => {
+//     try {
+//       const updatedTask = await BoardsService.updateTask(taskId, taskData);
+//       return updatedTask;
+//     } catch (error) {
+//       const message = error instanceof Error ? error.message : 'Erro ao atualizar task';
+//       return rejectWithValue(message);
+//     }
+//   }
+// );
+
+/**
+ * 🚧 FUTURO: Deletar task via API
+ * Descomente quando backend estiver pronto
+ */
+// export const deleteTaskAsync = createAsyncThunk(
+//   'boards/deleteTaskAsync',
+//   async (taskId: string, { rejectWithValue }) => {
+//     try {
+//       await BoardsService.deleteTask(taskId);
+//       return taskId;
+//     } catch (error) {
+//       const message = error instanceof Error ? error.message : 'Erro ao deletar task';
+//       return rejectWithValue(message);
+//     }
+//   }
+// );
+
 // ============================================
 // SLICE COM REDUCERS SÍNCRONOS
 // ============================================

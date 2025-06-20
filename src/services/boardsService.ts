@@ -123,8 +123,11 @@ export class BoardsService {
    * 🚧 FUTURO: Criar nova task
    * Descomente e implemente quando backend estiver pronto
    */
-  // static async createTask(boardId: string, taskData: CreateTaskBody): Promise<Task> {
+  // static async createTask(taskData: CreateTaskBody): Promise<Task> {
   //   try {
+  //     // Pode usar o boardId ativo do estado global ou passar como parâmetro
+  //     const boardId = 'active-board-id'; // TODO: obter do estado global
+  //     
   //     const response = await fetch(`${this.BASE_URL}/boards/${boardId}/tasks`, {
   //       method: 'POST',
   //       headers: {
@@ -150,8 +153,11 @@ export class BoardsService {
    * 🚧 FUTURO: Atualizar task existente
    * Descomente e implemente quando backend estiver pronto
    */
-  // static async updateTask(boardId: string, taskId: string, taskData: UpdateTaskBody): Promise<Task> {
+  // static async updateTask(taskId: string, taskData: UpdateTaskBody): Promise<Task> {
   //   try {
+  //     // Pode usar o boardId ativo do estado global ou passar como parâmetro
+  //     const boardId = 'active-board-id'; // TODO: obter do estado global
+  //     
   //     const response = await fetch(`${this.BASE_URL}/boards/${boardId}/tasks/${taskId}`, {
   //       method: 'PUT',
   //       headers: {
@@ -177,8 +183,11 @@ export class BoardsService {
    * 🚧 FUTURO: Deletar task
    * Descomente e implemente quando backend estiver pronto
    */
-  // static async deleteTask(boardId: string, taskId: string): Promise<void> {
+  // static async deleteTask(taskId: string): Promise<void> {
   //   try {
+  //     // Pode usar o boardId ativo do estado global ou passar como parâmetro
+  //     const boardId = 'active-board-id'; // TODO: obter do estado global
+  //     
   //     const response = await fetch(`${this.BASE_URL}/boards/${boardId}/tasks/${taskId}`, {
   //       method: 'DELETE',
   //     });
