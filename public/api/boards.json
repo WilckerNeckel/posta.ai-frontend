@@ -1,0 +1,90 @@
+[
+  {
+    "id": "board-1",
+    "name": "Projeto Kanban",
+    "columns": [
+      {
+        "id": "pending-col-1",
+        "name": "Pendente",
+        "color": "#635FC7",
+        "tasks": [
+          {
+            "id": "task-1",
+            "title": "Implementar autenticação",
+            "description": "Criar sistema de login com JWT para segurança da aplicação",
+            "status": "pending-col-1",
+            "subtasks": [
+              {
+                "id": "subtask-1",
+                "title": "Criar formulário de login",
+                "isCompleted": false
+              },
+              {
+                "id": "subtask-2", 
+                "title": "Implementar validação de credenciais",
+                "isCompleted": false
+              }
+            ]
+          },
+          {
+            "id": "task-2",
+            "title": "Configurar banco de dados",
+            "description": "Preparar estrutura do banco para armazenar dados dos usuários",
+            "status": "pending-col-1",
+            "subtasks": []
+          }
+        ]
+      },
+      {
+        "id": "progress-col-1",
+        "name": "Em Progresso",
+        "color": "#8471F2",
+        "tasks": [
+          {
+            "id": "task-3", 
+            "title": "Desenvolver dashboard",
+            "description": "Criar painel principal com métricas e gráficos",
+            "status": "progress-col-1",
+            "subtasks": [
+              {
+                "id": "subtask-3",
+                "title": "Criar componentes de gráfico",
+                "isCompleted": true
+              },
+              {
+                "id": "subtask-4",
+                "title": "Integrar dados da API",
+                "isCompleted": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "completed-col-1",
+        "name": "Concluído", 
+        "color": "#67E2AE",
+        "tasks": [
+          {
+            "id": "task-4",
+            "title": "Setup inicial do projeto",
+            "description": "Configuração do ambiente de desenvolvimento",
+            "status": "completed-col-1",
+            "subtasks": [
+              {
+                "id": "subtask-5",
+                "title": "Instalar dependências",
+                "isCompleted": true
+              },
+              {
+                "id": "subtask-6",
+                "title": "Configurar ESLint e Prettier",
+                "isCompleted": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+] 
