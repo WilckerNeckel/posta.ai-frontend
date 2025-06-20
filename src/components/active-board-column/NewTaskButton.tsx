@@ -90,13 +90,16 @@ export const NewTaskButton = ({ columnId, columnName }: Props) => {
       sx={(theme) => ({
         cursor: "pointer",
         background: "transparent",
-        border: `2px dashed ${palette.accent.default}`,
+        // border: `2px dashed ${palette.accent.default}`,
+        border: `2px dashed white`,
         transition: "all 0.2s ease-in-out",
         "&:hover": {
-          backgroundColor: palette.accent.light,
-          borderColor: palette.primary.main,
+          // backgroundColor: palette.accent.light,
+          borderColor: palette.accent.default,
           "& .new-task-button": {
-            color: palette.primary.main,
+            color: palette.accent.default,
+            // color: "white",
+
           },
         },
       })}
@@ -118,7 +121,9 @@ export const NewTaskButton = ({ columnId, columnName }: Props) => {
           className="new-task-button"
           sx={{ 
             transition: "color 0.2s ease-in-out",
-            color: palette.accent.default,
+            // color: palette.accent.default,
+            color: "white",
+
           }}
         >
           <Add
