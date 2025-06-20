@@ -82,7 +82,7 @@ export const NewTaskButton = ({ columnId, columnName }: Props) => {
       display="flex"
       alignItems="center"
       justifyContent="center"
-      height="160px"
+      height="100px"
       borderRadius="8px"
       mt={3}
       mb={2}
@@ -112,32 +112,34 @@ export const NewTaskButton = ({ columnId, columnName }: Props) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          textAlign: "center",
         }}
       >
         <Stack
+          direction="row"
           spacing={1}
           alignItems="center"
           justifyContent="center"
           className="new-task-button"
           sx={{ 
-            transition: "color 0.2s ease-in-out",
-            // color: palette.accent.default,
-            color: "white",
-
+        transition: "color 0.2s ease-in-out",
+        color: "white",
+        textAlign: "center",
           }}
         >
           <Add
-            sx={{
-              fontSize: "2rem",
-            }}
+        sx={{
+          fontSize: "2rem",
+        }}
           />
           <Typography
-            variant="body2"
-            fontWeight={600}
-            color="inherit"
-            textAlign="center"
+        fontFamily={"inter"}
+        variant="body2"
+        fontWeight={600}
+        color="inherit"
+        textAlign="center"
           >
-            Nova Task
+        Nova Task
           </Typography>
         </Stack>
       </CardActionArea>
