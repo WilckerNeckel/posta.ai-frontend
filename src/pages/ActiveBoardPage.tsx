@@ -253,7 +253,7 @@ export const ActiveBoardPage = () => {
               )}
             />
             {provided.placeholder}
-            <NewColumnButton />
+            {/* <NewColumnButton /> */}
             <TaskDetails />
             <DeleteTaskModal />
             <If condition={isOpen}>
