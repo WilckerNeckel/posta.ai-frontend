@@ -16,6 +16,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 import { palette } from "../themes/jsonTheme";
 import { Checkbox } from "@mui/material";
 import { useAppDispatch } from "../redux/store/store";
@@ -23,10 +25,12 @@ import {
     filterTasks,
     clearFilter,
 } from "../redux/reducers/boards/boards.reducer";
+import { setShowNewColumnModal } from "../redux/reducers/ui/ui.reducer";
 import { useSelector } from "react-redux";
 import {
     selectFilteredTasks,
     selectIsFiltered,
+    selectActiveBoard,
 } from "../redux/reducers/boards/boards.selector";
 
 const drawerWidth = 240;
@@ -110,6 +114,7 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
     const dispatch = useAppDispatch();
     const filteredTasks = useSelector(selectFilteredTasks);
     const isFiltered = useSelector(selectIsFiltered);
+    const activeBoard = useSelector(selectActiveBoard);
 
     const onFilter = (checked: boolean, title: string) => {
         if (checked) {
@@ -140,6 +145,25 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
 
             console.log(`${title} deselected`);
         }
+    };
+
+    // ============================================
+    // HANDLER PARA NOVA COLUNA
+    // ============================================
+    
+    /**
+     * ✅ FUNCIONAL: Abre modal para criar nova coluna
+     * - Verifica se existe board ativo
+     * - Dispatch action para abrir modal
+     */
+    const handleCreateNewColumn = () => {
+        if (!activeBoard) {
+            console.warn('⚠️ SideDrawer: Nenhum board ativo para criar coluna');
+            return;
+        }
+        
+        console.log('🆕 SideDrawer: Abrindo modal de nova coluna');
+        dispatch(setShowNewColumnModal(true));
     };
 
     return (
@@ -247,6 +271,48 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
                         </ListItem>
                     ))}
                 </List>
+                
+                {/* ============================================ */}
+                {/* BOTÃO NOVA COLUNA                          */}
+                {/* ============================================ */}
+                
+                <Box sx={{ p: 2 }}>
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={handleCreateNewColumn}
+                        disabled={!activeBoard}
+                        sx={{
+                            backgroundColor: palette.primary.main,
+                            color: "white",
+                            fontFamily: "Inter, sans-serif",
+                            fontWeight: 600,
+                            textTransform: "none",
+                            "&:hover": {
+                                backgroundColor: palette.primary[400],
+                            },
+                            "&:disabled": {
+                                backgroundColor: palette.bar.default,
+                                color: "#ccc",
+                            },
+                        }}
+                    >
+                        Nova Coluna
+                    </Button>
+                    
+                    {!activeBoard && (
+                        <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            textAlign="center"
+                            display="block"
+                            sx={{ mt: 1, fontSize: "0.7rem" }}
+                        >
+                            Selecione um board para criar colunas
+                        </Typography>
+                    )}
+                </Box>
             </Drawer>
             <Main open={open}>
                 <DrawerHeader />

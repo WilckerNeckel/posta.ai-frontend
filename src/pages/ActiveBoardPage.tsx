@@ -11,6 +11,7 @@ import { ActiveBoardColumn } from "../components/active-board-column/ActiveBoard
 import { NewColumnButton } from "../components/active-board-column/NewColumnButton";
 import { DeleteTaskModal } from "../components/delete-task-modal/DeleteTaskModal";
 import { NewTaskForm } from "../components/new-task-form/NewTaskForm";
+import { NewColumnModal } from "../components/new-column-modal/NewColumnModal";
 import { TaskDetails } from "../components/task-details/TaskDetails";
 import { NoBoardAlert } from "../components/ui/no-board-alert/NoBoardAlert";
 import { If } from "../components/utils";
@@ -259,6 +260,7 @@ export const ActiveBoardPage = () => {
             <If condition={isOpen}>
               <NewTaskForm />
             </If>
+            <NewColumnModal />
           </ColumnsContainer>
         )}
       </Droppable>

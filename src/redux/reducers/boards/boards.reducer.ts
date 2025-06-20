@@ -188,6 +188,64 @@ export const loadBoardsFromAPI = createAsyncThunk(
 //   }
 // );
 
+/**
+ * 🚧 FUTURO: Criar coluna via API
+ * Descomente quando backend estiver pronto
+ */
+// export const createColumnAsync = createAsyncThunk(
+//   'boards/createColumnAsync',
+//   async (columnData: CreateColumnBody, { getState, rejectWithValue }) => {
+//     try {
+//       const state = getState() as RootState;
+//       const boardId = columnData.boardId || state.boards.activeBoard?.id;
+//       
+//       if (!boardId) {
+//         throw new Error('Board ID é obrigatório para criar coluna');
+//       }
+//       
+//       const newColumn = await BoardsService.createColumn(boardId, columnData);
+//       return newColumn;
+//     } catch (error) {
+//       const message = error instanceof Error ? error.message : 'Erro ao criar coluna';
+//       return rejectWithValue(message);
+//     }
+//   }
+// );
+
+/**
+ * 🚧 FUTURO: Atualizar coluna via API
+ * Descomente quando backend estiver pronto
+ */
+// export const updateColumnAsync = createAsyncThunk(
+//   'boards/updateColumnAsync',
+//   async ({ columnId, columnData }: { columnId: string; columnData: Partial<CreateColumnBody> }, { rejectWithValue }) => {
+//     try {
+//       const updatedColumn = await BoardsService.updateColumn(columnId, columnData);
+//       return updatedColumn;
+//     } catch (error) {
+//       const message = error instanceof Error ? error.message : 'Erro ao atualizar coluna';
+//       return rejectWithValue(message);
+//     }
+//   }
+// );
+
+/**
+ * 🚧 FUTURO: Deletar coluna via API
+ * Descomente quando backend estiver pronto
+ */
+// export const deleteColumnAsync = createAsyncThunk(
+//   'boards/deleteColumnAsync',
+//   async (columnId: string, { rejectWithValue }) => {
+//     try {
+//       await BoardsService.deleteColumn(columnId);
+//       return columnId;
+//     } catch (error) {
+//       const message = error instanceof Error ? error.message : 'Erro ao deletar coluna';
+//       return rejectWithValue(message);
+//     }
+//   }
+// );
+
 // ============================================
 // SLICE COM REDUCERS SÍNCRONOS
 // ============================================
@@ -269,6 +327,36 @@ export const boardsReducer = createSlice({
       board.columns = newColumns;
       state.activeBoard = board;
     },
+    
+    // ============================================
+    // ✅ NOVA ACTION: ADICIONAR COLUNA
+    // ============================================
+    
+    /**
+     * ✅ FUNCIONAL: Adiciona nova coluna ao board ativo
+     * - Apenas atualiza Redux (não persiste)
+     * - Usa próxima cor disponível
+     * - Sincroniza com array de boards
+     */
+    addNewColumn: (state, { payload }: PayloadAction<{ name: string }>) => {
+      if (!state.activeBoard) return;
+      
+      const newColumn: Column = {
+        id: nanoid(),
+        name: payload.name,
+        tasks: [],
+        color: getColorByIndex(state.activeBoard.columns.length),
+      };
+      
+      state.activeBoard.columns.push(newColumn);
+      
+      // Sincroniza com array de boards
+      state.boards.forEach((board) => {
+        if (board.id !== state.activeBoard?.id) return;
+        board.columns = state.activeBoard.columns;
+      });
+    },
+    
     addNewTask: (state, { payload }: PayloadAction<CreateTaskBody>) => {
       if (!state.activeBoard) return;
 
@@ -578,5 +666,6 @@ export const {
   changeTaskStatus,
   setTaskStatusWithDrag,
   filterTasks,
-  clearFilter
+  clearFilter,
+  addNewColumn
 } = boardsReducer.actions;

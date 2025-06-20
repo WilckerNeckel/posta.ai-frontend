@@ -235,4 +235,111 @@ export class BoardsService {
   //     throw error;
   //   }
   // }
+
+  // ============================================
+  // MÉTODOS PARA COLUNAS (FUTURO)
+  // ============================================
+
+  /**
+   * 🚧 FUTURO: Criar nova coluna
+   * Descomente e implemente quando backend estiver pronto
+   */
+  // static async createColumn(boardId: string, columnData: CreateColumnBody): Promise<Column> {
+  //   try {
+  //     const response = await fetch(`${this.BASE_URL}/boards/${boardId}/columns`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(columnData),
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  
+  //     const newColumn = await response.json();
+  //     console.log('✅ Coluna criada:', newColumn);
+  //     return newColumn;
+  //   } catch (error) {
+  //     console.error('❌ Erro ao criar coluna:', error);
+  //     throw error;
+  //   }
+  // }
+
+  /**
+   * 🚧 FUTURO: Atualizar coluna existente
+   * Descomente e implemente quando backend estiver pronto
+   */
+  // static async updateColumn(columnId: string, columnData: Partial<CreateColumnBody>): Promise<Column> {
+  //   try {
+  //     const response = await fetch(`${this.BASE_URL}/columns/${columnId}`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(columnData),
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  
+  //     const updatedColumn = await response.json();
+  //     console.log('✅ Coluna atualizada:', updatedColumn);
+  //     return updatedColumn;
+  //   } catch (error) {
+  //     console.error('❌ Erro ao atualizar coluna:', error);
+  //     throw error;
+  //   }
+  // }
+
+  /**
+   * 🚧 FUTURO: Deletar coluna
+   * Descomente e implemente quando backend estiver pronto
+   */
+  // static async deleteColumn(columnId: string): Promise<void> {
+  //   try {
+  //     const response = await fetch(`${this.BASE_URL}/columns/${columnId}`, {
+  //       method: 'DELETE',
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  
+  //     console.log('✅ Coluna deletada:', columnId);
+  //   } catch (error) {
+  //     console.error('❌ Erro ao deletar coluna:', error);
+  //     throw error;
+  //   }
+  // }
+
+  /**
+   * 🚧 FUTURO: Reordenar colunas
+   * Descomente e implemente quando backend estiver pronto
+   */
+  // static async reorderColumns(
+  //   boardId: string,
+  //   columnIds: string[]
+  // ): Promise<void> {
+  //   try {
+  //     const response = await fetch(`${this.BASE_URL}/boards/${boardId}/columns/reorder`, {
+  //       method: 'PATCH',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ columnIds }),
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  
+  //     console.log('✅ Colunas reordenadas:', columnIds);
+  //   } catch (error) {
+  //     console.error('❌ Erro ao reordenar colunas:', error);
+  //     throw error;
+  //   }
+  // }
 } 

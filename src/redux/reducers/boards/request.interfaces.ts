@@ -12,6 +12,19 @@ export interface UpdateBoardBody {
   }[];
 }
 
+// ============================================
+// ✅ NOVA INTERFACE: CRIAR COLUNA
+// ============================================
+
+/**
+ * 🚧 FUTURO: Interface para criar coluna via API
+ * Preparada para quando backend estiver pronto
+ */
+export interface CreateColumnBody {
+  name: string;
+  boardId?: string; // Opcional, pode usar activeBoard do estado
+}
+
 export interface CreateTaskBody {
   title: string;
   columnId: string;

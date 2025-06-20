@@ -16,3 +16,6 @@ export const selectShowNewTaskModal = (state: RootState) =>
 
 export const selectShowDeleteTaskModal = (state: RootState) =>
   state.ui.showDeleteTaskModal;
+
+export const selectShowNewColumnModal = (state: RootState) =>
+  state.ui.showNewColumnModal;
