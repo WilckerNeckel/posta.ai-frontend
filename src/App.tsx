@@ -1,7 +1,8 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { StudentHome } from "./pages/StudentHome";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { muiTheme } from "./themes/muiTheme";
+import { LoginPage } from "./pages/LoginPage";
 
 function App() {
     return (
@@ -11,7 +12,9 @@ function App() {
             <ThemeProvider theme={muiTheme}>
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/" element={<StudentHome />} />
+                        <Route path="/" element={<LoginPage />} />
+                        <Route path="/board" element={<StudentHome />} />
+                        <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>
