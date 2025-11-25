@@ -88,12 +88,12 @@ export const NewTaskForm = () => {
             >
                 {title}
             </Typography>
-            <MyInput name="title" customLabel="Title" />
+            <MyInput name="title" customLabel="Título" />
             <MyInput
                 rows={3}
                 multiline
                 name="description"
-                customLabel="Description"
+                customLabel="Descrição"
                 placeholder="e.g. It's always good to take a break. I'll be back in 5 minutes."
             />
             {/* <TaskFormSubtasks

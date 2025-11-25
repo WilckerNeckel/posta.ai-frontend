@@ -5,7 +5,7 @@
     "columns": [
       {
         "id": "pending-col-1",
-        "name": "Pendente",
+        "name": "Novas Tarefas",
         "color": "#635FC7",
         "tasks": [
           {
@@ -37,7 +37,7 @@
       },
       {
         "id": "progress-col-1",
-        "name": "Em Progresso",
+        "name": "Fazendo",
         "color": "#8471F2",
         "tasks": [
           {
@@ -62,7 +62,7 @@
       },
       {
         "id": "completed-col-1",
-        "name": "Concluído", 
+        "name": "Finalizadas", 
         "color": "#67E2AE",
         "tasks": [
           {
