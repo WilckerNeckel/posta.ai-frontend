@@ -1,0 +1,2059 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Posta.ai API",
+        "description": "Documentação da API REST da Posta.ai",
+        "version": "1.0.0"
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "schemas": {}
+    },
+    "paths": {
+        "/api/users/": {
+            "post": {
+                "summary": "Criar usuário",
+                "tags": ["Users"],
+                "description": "Cria um usuário (aluno ou professor) e retorna os dados básicos.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "nome",
+                                    "role",
+                                    "curso",
+                                    "usuario",
+                                    "senha"
+                                ],
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "description": "Nome do usuário"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "enum": ["professor", "aluno"],
+                                        "description": "Perfil do usuário (professor ou aluno)"
+                                    },
+                                    "curso": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Ciência da Computação",
+                                            "Arquitetura e Urbanismo",
+                                            "Direito",
+                                            "Matemática",
+                                            "Engenharia de Produção",
+                                            "Engenharia de Alimentos"
+                                        ],
+                                        "description": "Curso do usuário"
+                                    },
+                                    "usuario": {
+                                        "type": "string",
+                                        "description": "Username de login"
+                                    },
+                                    "disciplinasIds": {
+                                        "type": "array",
+                                        "description": "IDs das disciplinas (opcional, usado principalmente para professor)",
+                                        "items": { "type": "string" },
+                                        "minItems": 1
+                                    },
+                                    "senha": {
+                                        "type": "string",
+                                        "description": "Senha do usuário",
+                                        "minLength": 6
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "id",
+                                        "matricula",
+                                        "disciplinas",
+                                        "role",
+                                        "nome",
+                                        "curso",
+                                        "dataAdmissao"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "Identificador do usuário"
+                                        },
+                                        "matricula": {
+                                            "type": "string",
+                                            "description": "Código de matrícula gerado pelo sistema"
+                                        },
+                                        "disciplinas": {
+                                            "type": "array",
+                                            "description": "IDs das disciplinas vinculadas",
+                                            "items": { "type": "string" }
+                                        },
+                                        "role": {
+                                            "type": "string",
+                                            "enum": ["professor", "aluno"],
+                                            "description": "Perfil do usuário no sistema"
+                                        },
+                                        "nome": {
+                                            "type": "string",
+                                            "description": "Nome completo do usuário"
+                                        },
+                                        "curso": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Ciência da Computação",
+                                                "Arquitetura e Urbanismo",
+                                                "Direito",
+                                                "Matemática",
+                                                "Engenharia de Produção",
+                                                "Engenharia de Alimentos"
+                                            ],
+                                            "description": "Curso associado"
+                                        },
+                                        "dataAdmissao": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "description": "Data de criação/admissão do usuário"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "summary": "Listar usuários",
+                "tags": ["Users"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "id",
+                                            "matricula",
+                                            "disciplinas",
+                                            "role",
+                                            "nome",
+                                            "curso",
+                                            "dataAdmissao"
+                                        ],
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "Identificador do usuário"
+                                            },
+                                            "matricula": {
+                                                "type": "string",
+                                                "description": "Código de matrícula gerado pelo sistema"
+                                            },
+                                            "disciplinas": {
+                                                "type": "array",
+                                                "description": "IDs das disciplinas vinculadas",
+                                                "items": { "type": "string" }
+                                            },
+                                            "role": {
+                                                "type": "string",
+                                                "enum": ["professor", "aluno"],
+                                                "description": "Perfil do usuário no sistema"
+                                            },
+                                            "nome": {
+                                                "type": "string",
+                                                "description": "Nome completo do usuário"
+                                            },
+                                            "curso": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "Ciência da Computação",
+                                                    "Arquitetura e Urbanismo",
+                                                    "Direito",
+                                                    "Matemática",
+                                                    "Engenharia de Produção",
+                                                    "Engenharia de Alimentos"
+                                                ],
+                                                "description": "Curso associado"
+                                            },
+                                            "dataAdmissao": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "description": "Data de criação/admissão do usuário"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "summary": "Buscar usuário por ID",
+                "tags": ["Users"],
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "ID do usuário"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "id",
+                                        "matricula",
+                                        "disciplinas",
+                                        "role",
+                                        "nome",
+                                        "curso",
+                                        "dataAdmissao"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "Identificador do usuário"
+                                        },
+                                        "matricula": {
+                                            "type": "string",
+                                            "description": "Código de matrícula gerado pelo sistema"
+                                        },
+                                        "disciplinas": {
+                                            "type": "array",
+                                            "description": "IDs das disciplinas vinculadas",
+                                            "items": { "type": "string" }
+                                        },
+                                        "role": {
+                                            "type": "string",
+                                            "enum": ["professor", "aluno"],
+                                            "description": "Perfil do usuário no sistema"
+                                        },
+                                        "nome": {
+                                            "type": "string",
+                                            "description": "Nome completo do usuário"
+                                        },
+                                        "curso": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Ciência da Computação",
+                                                "Arquitetura e Urbanismo",
+                                                "Direito",
+                                                "Matemática",
+                                                "Engenharia de Produção",
+                                                "Engenharia de Alimentos"
+                                            ],
+                                            "description": "Curso associado"
+                                        },
+                                        "dataAdmissao": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "description": "Data de criação/admissão do usuário"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/board/column": {
+            "post": {
+                "summary": "Criar coluna",
+                "tags": ["Board"],
+                "description": "Cria uma nova coluna no board do usuário.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["titulo", "disciplineColumn"],
+                                "properties": {
+                                    "titulo": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    },
+                                    "disciplineColumn": { "type": "boolean" }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "201": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "id",
+                                        "ordem",
+                                        "disciplineColumn",
+                                        "titulo",
+                                        "userId"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "Identificador da coluna"
+                                        },
+                                        "ordem": {
+                                            "type": "number",
+                                            "description": "Posição da coluna no quadro do usuário"
+                                        },
+                                        "disciplineColumn": {
+                                            "type": "boolean",
+                                            "description": "Indica se a coluna pertence a uma disciplina"
+                                        },
+                                        "titulo": {
+                                            "type": "string",
+                                            "description": "Título da coluna"
+                                        },
+                                        "userId": {
+                                            "type": "string",
+                                            "description": "ID do usuário proprietário da coluna"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "summary": "Listar colunas com tarefas",
+                "tags": ["Board"],
+                "description": "Retorna todas as colunas do usuário autenticado com suas tarefas.",
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "id",
+                                            "ordem",
+                                            "disciplineColumn",
+                                            "titulo",
+                                            "userId",
+                                            "tasks"
+                                        ],
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "Identificador da coluna"
+                                            },
+                                            "ordem": {
+                                                "type": "number",
+                                                "description": "Posição da coluna no quadro do usuário"
+                                            },
+                                            "disciplineColumn": {
+                                                "type": "boolean",
+                                                "description": "Indica se a coluna pertence a uma disciplina"
+                                            },
+                                            "titulo": {
+                                                "type": "string",
+                                                "description": "Título da coluna"
+                                            },
+                                            "userId": {
+                                                "type": "string",
+                                                "description": "ID do usuário proprietário da coluna"
+                                            },
+                                            "tasks": {
+                                                "type": "array",
+                                                "description": "Tarefas associadas à coluna",
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "id",
+                                                        "titulo",
+                                                        "ordem",
+                                                        "descricao",
+                                                        "columnId"
+                                                    ],
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "description": "Identificador da tarefa"
+                                                        },
+                                                        "titulo": {
+                                                            "type": "string",
+                                                            "description": "Título da tarefa"
+                                                        },
+                                                        "ordem": {
+                                                            "type": "number",
+                                                            "description": "Posição da tarefa na coluna"
+                                                        },
+                                                        "descricao": {
+                                                            "type": "string",
+                                                            "description": "Descrição da tarefa"
+                                                        },
+                                                        "columnId": {
+                                                            "type": "string",
+                                                            "description": "ID da coluna onde a tarefa está"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/board/column/{id}/move": {
+            "patch": {
+                "summary": "Mover coluna",
+                "tags": ["Board"],
+                "description": "Reordena a posição de uma coluna.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["novaPosicao"],
+                                "properties": {
+                                    "novaPosicao": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "ID da coluna"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "204": { "description": "Default Response" },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/board/column/{id}": {
+            "delete": {
+                "summary": "Excluir coluna",
+                "tags": ["Board"],
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "ID da coluna"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "204": { "description": "Default Response" },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar coluna",
+                "tags": ["Board"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "titulo": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "ID da coluna"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "id",
+                                        "ordem",
+                                        "disciplineColumn",
+                                        "titulo",
+                                        "userId"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "Identificador da coluna"
+                                        },
+                                        "ordem": {
+                                            "type": "number",
+                                            "description": "Posição da coluna no quadro do usuário"
+                                        },
+                                        "disciplineColumn": {
+                                            "type": "boolean",
+                                            "description": "Indica se a coluna pertence a uma disciplina"
+                                        },
+                                        "titulo": {
+                                            "type": "string",
+                                            "description": "Título da coluna"
+                                        },
+                                        "userId": {
+                                            "type": "string",
+                                            "description": "ID do usuário proprietário da coluna"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/board/task": {
+            "post": {
+                "summary": "Criar tarefa",
+                "tags": ["Board"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["titulo", "descricao", "columnId"],
+                                "properties": {
+                                    "titulo": {
+                                        "type": "string",
+                                        "minLength": 3
+                                    },
+                                    "descricao": { "type": "string" },
+                                    "columnId": { "type": "string" }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "201": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "id",
+                                        "titulo",
+                                        "ordem",
+                                        "descricao",
+                                        "columnId"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "Identificador da tarefa"
+                                        },
+                                        "titulo": {
+                                            "type": "string",
+                                            "description": "Título da tarefa"
+                                        },
+                                        "ordem": {
+                                            "type": "number",
+                                            "description": "Posição da tarefa na coluna"
+                                        },
+                                        "descricao": {
+                                            "type": "string",
+                                            "description": "Descrição da tarefa"
+                                        },
+                                        "columnId": {
+                                            "type": "string",
+                                            "description": "ID da coluna onde a tarefa está"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/board/task/teacher-post": {
+            "post": {
+                "summary": "Professor publica tarefa",
+                "tags": ["Board"],
+                "description": "Cria a tarefa para o professor e replica para alunos inscritos na disciplina.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["task", "disciplineId"],
+                                "properties": {
+                                    "task": {
+                                        "type": "object",
+                                        "required": [
+                                            "titulo",
+                                            "descricao",
+                                            "columnId"
+                                        ],
+                                        "properties": {
+                                            "titulo": {
+                                                "type": "string",
+                                                "minLength": 3
+                                            },
+                                            "descricao": { "type": "string" },
+                                            "columnId": { "type": "string" }
+                                        }
+                                    },
+                                    "disciplineId": { "type": "string" }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "201": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "id",
+                                        "titulo",
+                                        "ordem",
+                                        "descricao",
+                                        "columnId"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "Identificador da tarefa"
+                                        },
+                                        "titulo": {
+                                            "type": "string",
+                                            "description": "Título da tarefa"
+                                        },
+                                        "ordem": {
+                                            "type": "number",
+                                            "description": "Posição da tarefa na coluna"
+                                        },
+                                        "descricao": {
+                                            "type": "string",
+                                            "description": "Descrição da tarefa"
+                                        },
+                                        "columnId": {
+                                            "type": "string",
+                                            "description": "ID da coluna onde a tarefa está"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/board/task/{id}": {
+            "patch": {
+                "summary": "Atualizar tarefa",
+                "tags": ["Board"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "titulo": {
+                                        "type": "string",
+                                        "minLength": 3
+                                    },
+                                    "descricao": { "type": "string" }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "ID da tarefa"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "id",
+                                        "titulo",
+                                        "ordem",
+                                        "descricao",
+                                        "columnId"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "Identificador da tarefa"
+                                        },
+                                        "titulo": {
+                                            "type": "string",
+                                            "description": "Título da tarefa"
+                                        },
+                                        "ordem": {
+                                            "type": "number",
+                                            "description": "Posição da tarefa na coluna"
+                                        },
+                                        "descricao": {
+                                            "type": "string",
+                                            "description": "Descrição da tarefa"
+                                        },
+                                        "columnId": {
+                                            "type": "string",
+                                            "description": "ID da coluna onde a tarefa está"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Excluir tarefa",
+                "tags": ["Board"],
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "ID da tarefa"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "204": { "description": "Default Response" },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/board/task/{id}/move": {
+            "patch": {
+                "summary": "Mover tarefa",
+                "tags": ["Board"],
+                "description": "Reordena a posição de uma tarefa na coluna.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["novaPosicao"],
+                                "properties": {
+                                    "novaPosicao": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "ID da tarefa"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "204": { "description": "Default Response" },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "summary": "Autenticar usuário",
+                "tags": ["Auth"],
+                "description": "Valida as credenciais e retorna um token JWT para autenticação.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["usuario", "senha"],
+                                "properties": {
+                                    "usuario": {
+                                        "type": "string",
+                                        "description": "Nome de usuário utilizado para login"
+                                    },
+                                    "senha": {
+                                        "type": "string",
+                                        "description": "Senha do usuário",
+                                        "format": "password"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["accessToken"],
+                                    "properties": {
+                                        "accessToken": {
+                                            "type": "string",
+                                            "description": "Token JWT para autenticar as próximas requisições"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["status", "message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["status", "message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/disciplines/": {
+            "post": {
+                "summary": "Criar disciplina",
+                "tags": ["Disciplines"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["name", "curso"],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    },
+                                    "professorId": { "type": "string" },
+                                    "curso": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Ciência da Computação",
+                                            "Arquitetura e Urbanismo",
+                                            "Direito",
+                                            "Matemática",
+                                            "Engenharia de Produção",
+                                            "Engenharia de Alimentos"
+                                        ]
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["id", "name", "curso"],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "Identificador da disciplina"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Nome da disciplina"
+                                        },
+                                        "professorId": {
+                                            "type": ["null", "string"],
+                                            "description": "ID do professor responsável (quando definido)"
+                                        },
+                                        "curso": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Ciência da Computação",
+                                                "Arquitetura e Urbanismo",
+                                                "Direito",
+                                                "Matemática",
+                                                "Engenharia de Produção",
+                                                "Engenharia de Alimentos"
+                                            ],
+                                            "description": "Curso ao qual a disciplina pertence"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "summary": "Listar disciplinas",
+                "tags": ["Disciplines"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": ["id", "name", "curso"],
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "Identificador da disciplina"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "Nome da disciplina"
+                                            },
+                                            "professorId": {
+                                                "type": ["null", "string"],
+                                                "description": "ID do professor responsável (quando definido)"
+                                            },
+                                            "curso": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "Ciência da Computação",
+                                                    "Arquitetura e Urbanismo",
+                                                    "Direito",
+                                                    "Matemática",
+                                                    "Engenharia de Produção",
+                                                    "Engenharia de Alimentos"
+                                                ],
+                                                "description": "Curso ao qual a disciplina pertence"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/disciplines/{disciplineId}/enroll-student/{studentId}": {
+            "post": {
+                "summary": "Matricular aluno na disciplina",
+                "tags": ["Disciplines"],
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "disciplineId",
+                        "required": true,
+                        "description": "ID da disciplina"
+                    },
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "studentId",
+                        "required": true,
+                        "description": "ID do estudante"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "204": { "description": "Default Response" },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/disciplines/{disciplineId}/attribute-teacher/{teacherId}": {
+            "post": {
+                "summary": "Atribuir professor à disciplina",
+                "tags": ["Disciplines"],
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "disciplineId",
+                        "required": true,
+                        "description": "ID da disciplina"
+                    },
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "teacherId",
+                        "required": true,
+                        "description": "ID do professor"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "204": { "description": "Default Response" },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Ambiente de desenvolvimento local"
+        }
+    ],
+    "tags": [
+        { "name": "Auth", "description": "Autenticação e emissão de tokens" },
+        { "name": "Users", "description": "Gestão de usuários e perfis" },
+        { "name": "Board", "description": "Quadro, colunas e tarefas" },
+        {
+            "name": "Disciplines",
+            "description": "Disciplinas, matrícula e atribuição de professores"
+        }
+    ]
+}
