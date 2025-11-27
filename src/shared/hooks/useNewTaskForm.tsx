@@ -3,9 +3,8 @@ import { useForm, useFieldArray } from "react-hook-form";
 import * as yup from "yup";
 import { Task } from "../../config/interfaces/board.interface";
 import {
-  changeTaskStatus,
-  updateTask,
   createTaskAsync,
+  updateTaskAsync,
 } from "../../redux/reducers/boards/boards.reducer";
 import { UpdateTaskBody } from "../../redux/reducers/boards/request.interfaces";
 import { useAppDispatch } from "../../redux/store/store";
@@ -73,7 +72,7 @@ export const useNewTaskForm = ({ activeTask }: Props) => {
     );
   };
 
-  const onUpdateTask = (data: NewTaskFormSchema) => {
+  const onUpdateTask = async (data: NewTaskFormSchema) => {
     if (!activeTask) return;
 
     const subtasks: UpdateTaskBody["subtasks"] = data.subtasks.map(
@@ -84,8 +83,8 @@ export const useNewTaskForm = ({ activeTask }: Props) => {
       })
     );
 
-    dispatch(
-      updateTask({
+    await dispatch(
+      updateTaskAsync({
         subtasks,
         id: activeTask.id,
         columnId: data.columnId,
@@ -93,8 +92,6 @@ export const useNewTaskForm = ({ activeTask }: Props) => {
         description: data.description,
       })
     );
-
-    dispatch(changeTaskStatus(data.columnId));
   };
 
   const onSubmit = (data: NewTaskFormSchema) =>

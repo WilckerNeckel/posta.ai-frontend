@@ -34,6 +34,14 @@ export class HttpClient {
         return this.request<undefined, TResponse>("GET", path, { headers });
     }
 
+    async patch<TRequest, TResponse>(
+        path: string,
+        body: TRequest,
+        headers?: Record<string, string>
+    ): Promise<TResponse> {
+        return this.request<TRequest, TResponse>("PATCH", path, { body, headers });
+    }
+
     private async request<TRequest, TResponse>(
         method: HttpMethod,
         path: string,

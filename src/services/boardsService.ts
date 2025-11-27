@@ -168,6 +168,27 @@ export class BoardsService {
     }
   }
 
+  static async updateTask(taskData: UpdateTaskBody): Promise<Task> {
+    try {
+      const boardApi = new BoardApi();
+      const payload = {
+        titulo: taskData.title,
+        descricao: taskData.description || "",
+      };
+
+      const updatedTaskDTO = await boardApi.updateTask(taskData.id, payload);
+
+      // status/column comes from payload since endpoint doesn't change coluna
+      return this.mapTask(updatedTaskDTO, taskData.columnId);
+    } catch (error) {
+      console.error('❌ Erro ao atualizar task:', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
   /**
    * 🚧 FUTURO: Atualizar task existente
    * Descomente e implemente quando backend estiver pronto

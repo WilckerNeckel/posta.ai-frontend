@@ -37,6 +37,17 @@ export class BoardApi {
         );
     }
 
+    async updateTask(
+        taskId: string,
+        payload: { titulo?: string; descricao?: string }
+    ): Promise<BoardTaskDTO> {
+        return this.httpClient.patch<typeof payload, BoardTaskDTO>(
+            `/board/task/${taskId}`,
+            payload,
+            this.getAuthHeaders()
+        );
+    }
+
     private getAuthHeaders(): Record<string, string> {
         const token = localStorage.getItem("accessToken");
         return token ? { Authorization: `Bearer ${token}` } : {};

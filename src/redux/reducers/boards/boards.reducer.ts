@@ -150,6 +150,19 @@ export const createTaskAsync = createAsyncThunk(
   }
 );
 
+export const updateTaskAsync = createAsyncThunk(
+  'boards/updateTaskAsync',
+  async (taskData: UpdateTaskBody, { rejectWithValue }) => {
+    try {
+      const updatedTask = await BoardsService.updateTask(taskData);
+      return updatedTask;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao atualizar task';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 /**
  * 🚧 FUTURO: Atualizar task via API
  * Descomente quando backend estiver pronto
@@ -628,6 +641,43 @@ export const boardsReducer = createSlice({
       })
       .addCase(createTaskAsync.rejected, (state, action) => {
         state.error = (action.payload as string) || 'Erro ao criar task';
+      })
+      // ✅ UPDATE TASK (BACKEND)
+      .addCase(updateTaskAsync.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(updateTaskAsync.fulfilled, (state, action) => {
+        if (!state.activeBoard) return;
+
+        const currentColumn = state.activeBoard.columns.find((column) =>
+          column.tasks.some((task) => task.id === action.payload.id)
+        );
+
+        const targetColumn = state.activeBoard.columns.find(
+          (column) => column.id === action.payload.status
+        );
+
+        if (!currentColumn || !targetColumn) return;
+
+        // Remove da coluna atual
+        currentColumn.tasks = currentColumn.tasks.filter(
+          (task) => task.id !== action.payload.id
+        );
+
+        // Adiciona na coluna de destino (fim da lista)
+        targetColumn.tasks.push(action.payload);
+
+        if (state.activeTask?.id === action.payload.id) {
+          state.activeTask = action.payload;
+        }
+
+        state.boards.forEach((board) => {
+          if (board.id !== state.activeBoard?.id) return;
+          board.columns = state.activeBoard.columns;
+        });
+      })
+      .addCase(updateTaskAsync.rejected, (state, action) => {
+        state.error = (action.payload as string) || 'Erro ao atualizar task';
       });
 
     // 🚧 FUTURO: Descomente quando backend estiver pronto
