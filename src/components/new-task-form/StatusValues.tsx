@@ -14,7 +14,7 @@ export const StatusValues = ({
   defaultValue = status.length === 1 ? status[0].key : undefined,
 }: Props) => {
   return (
-    <MyInput select name={name} customLabel="Status" value={defaultValue}>
+    <MyInput select name={name} customLabel="Coluna" value={defaultValue}>
       {status.map((item, index) => (
         <MenuItem
           key={item.key}
