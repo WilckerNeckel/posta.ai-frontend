@@ -7,11 +7,17 @@ interface RequestOptions<TBody> {
     headers?: Record<string, string>;
 }
 
+type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+
 export class HttpClient {
-    constructor(
-        private readonly baseUrl: string,
-        private readonly fetcher: typeof fetch = fetch
-    ) {}
+    private readonly fetcher: FetchLike;
+
+    constructor(baseUrl: string, fetcher: typeof fetch = fetch) {
+        this.fetcher = (input, init) => fetcher(input, init);
+        this.baseUrl = baseUrl;
+    }
+
+    private readonly baseUrl: string;
 
     async post<TRequest, TResponse>(
         path: string,
