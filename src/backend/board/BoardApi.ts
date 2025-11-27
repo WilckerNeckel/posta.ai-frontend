@@ -48,6 +48,14 @@ export class BoardApi {
         );
     }
 
+    async moveTask(taskId: string, novaPosicao: number): Promise<void> {
+        await this.httpClient.patch<{ novaPosicao: number }, void>(
+            `/board/task/${taskId}/move`,
+            { novaPosicao },
+            this.getAuthHeaders()
+        );
+    }
+
     private getAuthHeaders(): Record<string, string> {
         const token = localStorage.getItem("accessToken");
         return token ? { Authorization: `Bearer ${token}` } : {};

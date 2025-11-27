@@ -21,6 +21,7 @@ import {
   setColumnsOder,
   setTasksOrder,
   setTaskStatusWithDrag,
+  moveTaskOrderAsync,
 } from "../redux/reducers/boards/boards.reducer";
 import {
   setIsNewBoardModalEditMode,
@@ -128,6 +129,17 @@ export const ActiveBoardPage = () => {
 
       const newTasks = arrayMove(column.tasks, source.index, destination.index);
       dispatch(setTasksOrder(newTasks));
+
+      // Envia posição 1-based para API
+      const movedTask = newTasks[destination.index];
+      if (movedTask) {
+        dispatch(
+          moveTaskOrderAsync({
+            taskId: movedTask.id,
+            newPosition: destination.index + 1,
+          })
+        );
+      }
     } else {
       dispatch(
         setTaskStatusWithDrag({

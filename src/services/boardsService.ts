@@ -189,6 +189,19 @@ export class BoardsService {
     }
   }
 
+  static async moveTaskWithinColumn(taskId: string, newPosition: number): Promise<void> {
+    try {
+      const boardApi = new BoardApi();
+      await boardApi.moveTask(taskId, newPosition);
+    } catch (error) {
+      console.error('❌ Erro ao mover task:', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
   /**
    * 🚧 FUTURO: Atualizar task existente
    * Descomente e implemente quando backend estiver pronto

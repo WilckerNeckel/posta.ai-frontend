@@ -163,6 +163,22 @@ export const updateTaskAsync = createAsyncThunk(
   }
 );
 
+export const moveTaskOrderAsync = createAsyncThunk(
+  'boards/moveTaskOrderAsync',
+  async (
+    { taskId, newPosition }: { taskId: string; newPosition: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      await BoardsService.moveTaskWithinColumn(taskId, newPosition);
+      return { taskId, newPosition };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao mover task';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 /**
  * 🚧 FUTURO: Atualizar task via API
  * Descomente quando backend estiver pronto
@@ -678,6 +694,10 @@ export const boardsReducer = createSlice({
       })
       .addCase(updateTaskAsync.rejected, (state, action) => {
         state.error = (action.payload as string) || 'Erro ao atualizar task';
+      })
+      // ✅ MOVE TASK ORDER (BACKEND)
+      .addCase(moveTaskOrderAsync.rejected, (state, action) => {
+        state.error = (action.payload as string) || 'Erro ao mover task';
       });
 
     // 🚧 FUTURO: Descomente quando backend estiver pronto
