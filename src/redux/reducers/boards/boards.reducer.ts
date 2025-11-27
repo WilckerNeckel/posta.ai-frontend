@@ -137,22 +137,18 @@ export const loadBoardsFromAPI = createAsyncThunk(
 //   }
 // );
 
-/**
- * 🚧 FUTURO: Criar task via API
- * Descomente quando backend estiver pronto
- */
-// export const createTaskAsync = createAsyncThunk(
-//   'boards/createTaskAsync',
-//   async (taskData: CreateTaskBody, { rejectWithValue }) => {
-//     try {
-//       const newTask = await BoardsService.createTask(taskData);
-//       return newTask;
-//     } catch (error) {
-//       const message = error instanceof Error ? error.message : 'Erro ao criar task';
-//       return rejectWithValue(message);
-//     }
-//   }
-// );
+export const createTaskAsync = createAsyncThunk(
+  'boards/createTaskAsync',
+  async (taskData: CreateTaskBody, { rejectWithValue }) => {
+    try {
+      const newTask = await BoardsService.createTask(taskData);
+      return newTask;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao criar task';
+      return rejectWithValue(message);
+    }
+  }
+);
 
 /**
  * 🚧 FUTURO: Atualizar task via API
@@ -611,6 +607,27 @@ export const boardsReducer = createSlice({
         state.boards = [];
         state.activeBoard = null;
         console.error('❌ Erro ao carregar boards:', state.error);
+      })
+      // ✅ CREATE TASK (BACKEND)
+      .addCase(createTaskAsync.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(createTaskAsync.fulfilled, (state, action) => {
+        if (!state.activeBoard) return;
+        const column = state.activeBoard.columns.find(
+          (columnItem) => columnItem.id === action.payload.status
+        );
+        if (!column) return;
+
+        column.tasks.push(action.payload);
+
+        state.boards.forEach((board) => {
+          if (board.id !== state.activeBoard?.id) return;
+          board.columns = state.activeBoard.columns;
+        });
+      })
+      .addCase(createTaskAsync.rejected, (state, action) => {
+        state.error = (action.payload as string) || 'Erro ao criar task';
       });
 
     // 🚧 FUTURO: Descomente quando backend estiver pronto

@@ -29,6 +29,14 @@ export class BoardApi {
         return this.httpClient.get<BoardColumnDTO[]>("/board/column", this.getAuthHeaders());
     }
 
+    async createTask(payload: { titulo: string; descricao: string; columnId: string }): Promise<BoardTaskDTO> {
+        return this.httpClient.post<typeof payload, BoardTaskDTO>(
+            "/board/task",
+            payload,
+            this.getAuthHeaders()
+        );
+    }
+
     private getAuthHeaders(): Record<string, string> {
         const token = localStorage.getItem("accessToken");
         return token ? { Authorization: `Bearer ${token}` } : {};

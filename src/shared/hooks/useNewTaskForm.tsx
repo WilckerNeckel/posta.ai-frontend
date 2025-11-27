@@ -3,9 +3,9 @@ import { useForm, useFieldArray } from "react-hook-form";
 import * as yup from "yup";
 import { Task } from "../../config/interfaces/board.interface";
 import {
-  addNewTask,
   changeTaskStatus,
   updateTask,
+  createTaskAsync,
 } from "../../redux/reducers/boards/boards.reducer";
 import { UpdateTaskBody } from "../../redux/reducers/boards/request.interfaces";
 import { useAppDispatch } from "../../redux/store/store";
@@ -62,9 +62,9 @@ export const useNewTaskForm = ({ activeTask }: Props) => {
     name: "subtasks",
   });
 
-  const onCreateTask = (data: NewTaskFormSchema) => {
-    dispatch(
-      addNewTask({
+  const onCreateTask = async (data: NewTaskFormSchema) => {
+    await dispatch(
+      createTaskAsync({
         title: data.title,
         columnId: data.columnId,
         description: data.description,

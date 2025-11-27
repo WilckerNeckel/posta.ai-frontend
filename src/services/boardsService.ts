@@ -5,7 +5,7 @@ import {
   UpdateBoardBody,
   UpdateTaskBody,
 } from '../redux/reducers/boards/request.interfaces';
-import { BoardApi, BoardColumnDTO } from '../backend/board/BoardApi';
+import { BoardApi, BoardColumnDTO, BoardTaskDTO } from '../backend/board/BoardApi';
 import { ApiError } from '../backend/http/ApiError';
 import { getColorByIndex } from '../helpers/getColumnColor';
 
@@ -148,6 +148,25 @@ export class BoardsService {
   //     throw error;
   //   }
   // }
+  static async createTask(taskData: CreateTaskBody): Promise<Task> {
+    try {
+      const boardApi = new BoardApi();
+      const payload = {
+        titulo: taskData.title,
+        descricao: taskData.description || "",
+        columnId: taskData.columnId,
+      };
+
+      const newTaskDTO = await boardApi.createTask(payload);
+      return this.mapTask(newTaskDTO);
+    } catch (error) {
+      console.error('❌ Erro ao criar task:', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
 
   /**
    * 🚧 FUTURO: Atualizar task existente
@@ -354,7 +373,7 @@ export class BoardsService {
       id: column.id,
       name: column.titulo,
       color: getColorByIndex(columnIndex),
-      tasks: this.mapTasks(column.tasks, column.titulo),
+      tasks: this.mapTasks(column.tasks, column.id),
     }));
 
     return {
@@ -364,15 +383,19 @@ export class BoardsService {
     };
   }
 
-  private static mapTasks(tasks: BoardColumnDTO['tasks'], status: string): Task[] {
+  private static mapTasks(tasks: BoardColumnDTO['tasks'], columnId: string): Task[] {
     return [...tasks]
       .sort((a, b) => a.ordem - b.ordem)
-      .map((task) => ({
-        id: task.id,
-        title: task.titulo,
-        description: task.descricao,
-        status,
-        subtasks: [],
-      }));
+      .map((task) => this.mapTask(task, columnId));
+  }
+
+  private static mapTask(task: BoardTaskDTO, columnId?: string): Task {
+    return {
+      id: task.id,
+      title: task.titulo,
+      description: task.descricao,
+      status: columnId ?? task.columnId,
+      subtasks: [],
+    };
   }
 }
