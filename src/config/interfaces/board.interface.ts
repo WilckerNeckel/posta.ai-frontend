@@ -9,6 +9,7 @@ export interface Column {
   id: string;
   tasks: Task[];
   color: string;
+  disciplineColumn?: boolean;
 }
 
 export interface Task {

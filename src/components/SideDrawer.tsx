@@ -32,6 +32,7 @@ import {
     selectIsFiltered,
     selectActiveBoard,
 } from "../redux/reducers/boards/boards.selector";
+import { Column } from "../config/interfaces/board.interface";
 
 const drawerWidth = 240;
 
@@ -116,21 +117,20 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
     const isFiltered = useSelector(selectIsFiltered);
     const activeBoard = useSelector(selectActiveBoard);
 
-    const onFilter = (checked: boolean, title: string) => {
+    const onFilter = (checked: boolean, filterValue: string) => {
         if (checked) {
             // Add filter to active filters
-            const newFilters = [...activeFilters, title];
+            const newFilters = [...activeFilters, filterValue];
             setActiveFilters(newFilters);
 
             // Apply filtering - search for tasks that match any of the active filters as complete phrases
-            const searchTerm = newFilters.join("|");
-            dispatch(filterTasks(searchTerm));
+            dispatch(filterTasks(newFilters));
 
-            console.log(`${title} selected`);
+            console.log(`${filterValue} selected`);
         } else {
             // Remove filter from active filters
             const newFilters = activeFilters.filter(
-                (filter) => filter !== title
+                (filter) => filter !== filterValue
             );
             setActiveFilters(newFilters);
 
@@ -139,13 +139,26 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
                 dispatch(clearFilter());
             } else {
                 // Apply remaining filters
-                const searchTerm = newFilters.join("|");
-                dispatch(filterTasks(searchTerm));
+                dispatch(filterTasks(newFilters));
             }
 
-            console.log(`${title} deselected`);
+            console.log(`${filterValue} deselected`);
         }
     };
+
+    const disciplineColumns: Column[] =
+        activeBoard?.columns.filter((col) => col.disciplineColumn) ?? [];
+
+    const filters = [
+        ...disciplineColumns.map((col) => ({
+            id: col.id,
+            label: col.name,
+        })),
+        {
+            id: "mine",
+            label: "Minhas tarefas",
+        },
+    ];
 
     // ============================================
     // HANDLER PARA NOVA COLUNA
@@ -246,27 +259,24 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
                 <Divider />
                 <Divider />
                 <List>
-                    {[
-                        "Laboratório de redes",
-                        "Banco de dados",
-                        "Matemática discreta",
-                    ].map((text, index) => (
-                        <ListItem key={text} disablePadding>
+                    {filters.map((filter) => (
+                        <ListItem key={filter.id} disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
                                     <Checkbox
                                         edge="start"
                                         tabIndex={-1}
                                         disableRipple
+                                        checked={activeFilters.includes(filter.id)}
                                         onChange={(event) => {
                                             onFilter(
                                                 event.target.checked,
-                                                text
+                                                filter.id
                                             );
                                         }}
                                     />
                                 </ListItemIcon>
-                                <ListItemText primary={text} />
+                                <ListItemText primary={filter.label} />
                             </ListItemButton>
                         </ListItem>
                     ))}

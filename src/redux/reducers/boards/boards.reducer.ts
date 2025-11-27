@@ -591,29 +591,38 @@ export const boardsReducer = createSlice({
         board.columns = state.activeBoard.columns;
       });
     },
-    filterTasks: (state, { payload }: PayloadAction<string>) => {
+    filterTasks: (state, { payload }: PayloadAction<string[]>) => {
       if (!state.activeBoard) return;
-      
-      const searchTerms = payload.toLowerCase().trim().split('|').filter(term => term.length > 0);
-      
-      if (searchTerms.length === 0) {
-        // If no search terms, clear filtering
+
+      if (!payload || payload.length === 0) {
         state.filteredTasks = [];
         state.isFiltered = false;
         return;
       }
-      
-      // Collect all tasks from all columns and filter by title
+
+      const columnById = new Map(
+        state.activeBoard.columns.map((column) => [column.id, column])
+      );
+
       const allTasks = state.activeBoard.columns.reduce<Task[]>(
         (acc, column) => [...acc, ...column.tasks],
         []
       );
-      
-      // Use OR logic - task matches if it contains ANY of the search terms as complete phrases
-      const filtered = allTasks.filter(task => 
-        searchTerms.some(term => task.title.toLowerCase().includes(term.trim()))
-      );
-      
+
+      const filtered = allTasks.filter((task) => {
+        const column = columnById.get(task.status);
+        const isDiscipline = column?.disciplineColumn === true;
+
+        const wantsMine = payload.includes("mine");
+        const wantsColumn = payload.includes(task.status);
+
+        if (isDiscipline) {
+          return wantsColumn;
+        }
+
+        return wantsMine;
+      });
+
       state.filteredTasks = filtered;
       state.isFiltered = true;
     },

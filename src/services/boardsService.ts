@@ -419,6 +419,7 @@ export class BoardsService {
     const columns: Column[] = sortedColumns.map((column, columnIndex) => ({
       id: column.id,
       name: column.titulo,
+      disciplineColumn: column.disciplineColumn,
       color: getColorByIndex(columnIndex),
       tasks: this.mapTasks(column.tasks, column.id),
     }));
