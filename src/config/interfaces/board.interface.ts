@@ -10,6 +10,7 @@ export interface Column {
   tasks: Task[];
   color: string;
   disciplineColumn?: boolean;
+  order?: number;
 }
 
 export interface Task {

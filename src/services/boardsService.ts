@@ -215,6 +215,32 @@ export class BoardsService {
     }
   }
 
+  static async createColumn(columnName: string, disciplineColumn = false): Promise<Column> {
+    try {
+      const boardApi = new BoardApi();
+      const payload = {
+        titulo: columnName,
+        disciplineColumn,
+      };
+
+      const newColumnDTO = await boardApi.createColumn(payload);
+      return {
+        id: newColumnDTO.id,
+        name: newColumnDTO.titulo,
+        tasks: [],
+        disciplineColumn: newColumnDTO.disciplineColumn,
+        order: newColumnDTO.ordem,
+        color: "",
+      };
+    } catch (error) {
+      console.error('❌ Erro ao criar coluna:', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
   /**
    * 🚧 FUTURO: Atualizar task existente
    * Descomente e implemente quando backend estiver pronto

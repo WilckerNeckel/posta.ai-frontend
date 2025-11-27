@@ -16,7 +16,7 @@ import * as yup from "yup";
 import { BaseModal } from "../base-modal/BaseModal";
 import { MyInput } from "../my-input/MyInput";
 import { useAppDispatch } from "../../redux/store/store";
-import { addNewColumn } from "../../redux/reducers/boards/boards.reducer";
+import { createColumnAsync } from "../../redux/reducers/boards/boards.reducer";
 import { setShowNewColumnModal } from "../../redux/reducers/ui/ui.reducer";
 import { selectShowNewColumnModal } from "../../redux/reducers/ui/ui.selector";
 import { selectActiveBoard } from "../../redux/reducers/boards/boards.selector";
@@ -59,11 +59,11 @@ export const NewColumnModal = () => {
   };
 
   /**
-   * ✅ FUNCIONAL: Cria nova coluna no board ativo
-   * - Usa action addNewColumn (Redux local)
-   * - Fecha modal e limpa formulário
+   * ✅ FUNCIONAL: Cria nova coluna no board ativo via API
+   * - Usa createColumnAsync
+   * - Fecha modal e limpa formulário ao concluir com sucesso
    */
-  const onSubmit = (data: NewColumnFormSchema) => {
+  const onSubmit = async (data: NewColumnFormSchema) => {
     if (!activeBoard) {
       console.warn('⚠️ NewColumnModal: Nenhum board ativo para adicionar coluna');
       return;
@@ -71,12 +71,16 @@ export const NewColumnModal = () => {
 
     console.log('🆕 NewColumnModal: Criando nova coluna:', data.columnName);
     
-    // Dispatch action para criar coluna
-    dispatch(addNewColumn({ 
-      name: data.columnName 
-    }));
-    
-    closeModal();
+    const result = await dispatch(
+      createColumnAsync({
+        name: data.columnName,
+        disciplineColumn: false,
+      })
+    );
+
+    if (createColumnAsync.fulfilled.match(result)) {
+      closeModal();
+    }
   };
 
   // ============================================

@@ -25,6 +25,7 @@ import {
   UpdateTaskBody,
 } from "./request.interfaces";
 import { BoardsService } from "../../../services/boardsService";
+import { getColorByIndex } from "../../../helpers/getColumnColor";
 
 // ============================================
 // STATE INTERFACE COM LOADING/ERROR
@@ -190,6 +191,22 @@ export const moveColumnOrderAsync = createAsyncThunk(
       return { columnId, newPosition };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Erro ao mover coluna';
+      return rejectWithValue(message);
+    }
+  }
+);
+
+export const createColumnAsync = createAsyncThunk(
+  'boards/createColumnAsync',
+  async (
+    { name, disciplineColumn = false }: { name: string; disciplineColumn?: boolean },
+    { rejectWithValue }
+  ) => {
+    try {
+      const newColumn = await BoardsService.createColumn(name, disciplineColumn);
+      return newColumn;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao criar coluna';
       return rejectWithValue(message);
     }
   }
@@ -727,6 +744,39 @@ export const boardsReducer = createSlice({
       // ✅ MOVE COLUMN ORDER (BACKEND)
       .addCase(moveColumnOrderAsync.rejected, (state, action) => {
         state.error = (action.payload as string) || 'Erro ao mover coluna';
+      })
+      // ✅ CREATE COLUMN (BACKEND)
+      .addCase(createColumnAsync.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(createColumnAsync.fulfilled, (state, action) => {
+        if (!state.activeBoard) return;
+
+        const insertIndex =
+          action.payload.order && action.payload.order > 0
+            ? Math.min(
+                state.activeBoard.columns.length,
+                Math.max(0, action.payload.order - 1)
+              )
+            : state.activeBoard.columns.length;
+
+        const newColumn: Column = {
+          ...action.payload,
+          color: getColorByIndex(insertIndex),
+          tasks: action.payload.tasks ?? [],
+        };
+
+        const newColumns = [...state.activeBoard.columns];
+        newColumns.splice(insertIndex, 0, newColumn);
+        state.activeBoard.columns = newColumns;
+
+        state.boards.forEach((board) => {
+          if (board.id !== state.activeBoard?.id) return;
+          board.columns = state.activeBoard.columns;
+        });
+      })
+      .addCase(createColumnAsync.rejected, (state, action) => {
+        state.error = (action.payload as string) || 'Erro ao criar coluna';
       });
 
     // 🚧 FUTURO: Descomente quando backend estiver pronto

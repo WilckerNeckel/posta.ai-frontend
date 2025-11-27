@@ -64,6 +64,14 @@ export class BoardApi {
         );
     }
 
+    async createColumn(payload: { titulo: string; disciplineColumn: boolean }): Promise<BoardColumnDTO> {
+        return this.httpClient.post<typeof payload, BoardColumnDTO>(
+            "/board/column",
+            payload,
+            this.getAuthHeaders()
+        );
+    }
+
     private getAuthHeaders(): Record<string, string> {
         const token = localStorage.getItem("accessToken");
         return token ? { Authorization: `Bearer ${token}` } : {};
