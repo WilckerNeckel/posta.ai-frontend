@@ -19,7 +19,7 @@ export class AuthApi {
 
     async login(payload: LoginRequestDTO): Promise<LoginResponseDTO> {
         return this.httpClient.post<LoginRequestDTO, LoginResponseDTO>(
-            "/api/auth/login",
+            "/auth/login",
             payload
         );
     }

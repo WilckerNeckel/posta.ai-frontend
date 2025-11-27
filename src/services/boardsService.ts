@@ -1,13 +1,15 @@
-import { Board } from '../config/interfaces/board.interface';
+import { Board, Column, Task } from '../config/interfaces/board.interface';
 import {
   CreateBoardBody,
   CreateTaskBody,
   UpdateBoardBody,
   UpdateTaskBody,
 } from '../redux/reducers/boards/request.interfaces';
+import { BoardApi, BoardColumnDTO } from '../backend/board/BoardApi';
+import { ApiError } from '../backend/http/ApiError';
+import { getColorByIndex } from '../helpers/getColumnColor';
 
 export class BoardsService {
-  private static readonly BASE_URL = '/api';
 
   // ============================================
   // MÉTODO FUNCIONAL - LEITURA DE DADOS
@@ -19,20 +21,18 @@ export class BoardsService {
    */
   static async getBoards(): Promise<Board[]> {
     try {
-      const response = await fetch(`${this.BASE_URL}/boards.json`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const boards = await response.json();
-      console.log('✅ Boards carregados do mock JSON:', boards.length, 'board(s)');
-      return boards;
-      
+      const boardApi = new BoardApi();
+      const columnsDTO = await boardApi.listColumns();
+
+      const mappedBoard = this.mapColumnsToBoard(columnsDTO);
+      console.log('✅ Boards carregados do backend:', mappedBoard.columns.length, 'coluna(s)');
+      return [mappedBoard];
     } catch (error) {
       console.error('❌ Erro ao buscar boards:', error);
-      // Fallback: retorna array vazio em caso de erro
-      return [];
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
     }
   }
 
@@ -342,4 +342,37 @@ export class BoardsService {
   //     throw error;
   //   }
   // }
-} 
+
+  // ============================================
+  // MAPEAMENTO DE DTO -> MODELO
+  // ============================================
+
+  private static mapColumnsToBoard(columnsDTO: BoardColumnDTO[]): Board {
+    const sortedColumns = [...columnsDTO].sort((a, b) => a.ordem - b.ordem);
+
+    const columns: Column[] = sortedColumns.map((column, columnIndex) => ({
+      id: column.id,
+      name: column.titulo,
+      color: getColorByIndex(columnIndex),
+      tasks: this.mapTasks(column.tasks, column.titulo),
+    }));
+
+    return {
+      id: 'backend-board',
+      name: 'Quadro',
+      columns,
+    };
+  }
+
+  private static mapTasks(tasks: BoardColumnDTO['tasks'], status: string): Task[] {
+    return [...tasks]
+      .sort((a, b) => a.ordem - b.ordem)
+      .map((task) => ({
+        id: task.id,
+        title: task.titulo,
+        description: task.descricao,
+        status,
+        subtasks: [],
+      }));
+  }
+}

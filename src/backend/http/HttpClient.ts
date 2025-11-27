@@ -27,6 +27,13 @@ export class HttpClient {
         return this.request<TRequest, TResponse>("POST", path, { body, headers });
     }
 
+    async get<TResponse>(
+        path: string,
+        headers?: Record<string, string>
+    ): Promise<TResponse> {
+        return this.request<undefined, TResponse>("GET", path, { headers });
+    }
+
     private async request<TRequest, TResponse>(
         method: HttpMethod,
         path: string,
