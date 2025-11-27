@@ -72,6 +72,13 @@ export class BoardApi {
         );
     }
 
+    async deleteTask(taskId: string): Promise<void> {
+        await this.httpClient.delete<void>(
+            `/board/task/${taskId}`,
+            this.getAuthHeaders()
+        );
+    }
+
     private getAuthHeaders(): Record<string, string> {
         const token = localStorage.getItem("accessToken");
         return token ? { Authorization: `Bearer ${token}` } : {};

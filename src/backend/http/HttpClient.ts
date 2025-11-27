@@ -42,6 +42,13 @@ export class HttpClient {
         return this.request<TRequest, TResponse>("PATCH", path, { body, headers });
     }
 
+    async delete<TResponse = void>(
+        path: string,
+        headers?: Record<string, string>
+    ): Promise<TResponse> {
+        return this.request<undefined, TResponse>("DELETE", path, { headers });
+    }
+
     private async request<TRequest, TResponse>(
         method: HttpMethod,
         path: string,
@@ -49,12 +56,17 @@ export class HttpClient {
     ): Promise<TResponse> {
         const url = this.buildUrl(path);
 
+        const headers: Record<string, string> = {
+            ...options.headers,
+        };
+
+        if (options.body !== undefined) {
+            headers["Content-Type"] = "application/json";
+        }
+
         const response = await this.fetcher(url, {
             method,
-            headers: {
-                "Content-Type": "application/json",
-                ...options.headers,
-            },
+            headers,
             body: options.body ? JSON.stringify(options.body) : undefined,
         });
 

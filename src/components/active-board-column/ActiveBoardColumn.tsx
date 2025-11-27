@@ -10,6 +10,8 @@ import { DragType } from "../../pages/ActiveBoardPage";
 import { palette } from "../../themes/jsonTheme";
 import { useSelector } from "react-redux";
 import { selectFilteredTasks, selectIsFiltered } from "../../redux/reducers/boards/boards.selector";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Typography } from "@mui/material";
 
 interface Props {
   column: Column;
@@ -86,6 +88,40 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
                   columnId={column.id}
                   columnName={column.name}
                 />
+                <Droppable droppableId={`delete-${column.id}`} type={DragType.TASK}>
+                  {(deleteProvided, deleteSnapshot) => (
+                    <Box
+                      ref={deleteProvided.innerRef}
+                      {...deleteProvided.droppableProps}
+                      sx={{
+                        mt: 2,
+                        mb: 1,
+                        mx: 1,
+                        p: 1.5,
+                        borderRadius: 2,
+                        border: "2px dashed",
+                        borderColor: deleteSnapshot.isDraggingOver
+                          ? palette.error?.main || "#EA5555"
+                          : "#ffffff80",
+                        backgroundColor: deleteSnapshot.isDraggingOver
+                          ? "#ea555525"
+                          : "transparent",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 1,
+                        transition: "all 0.2s ease-in-out",
+                        color: "#fff",
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                      <Typography variant="body2" fontWeight={700}>
+                        Solte aqui para apagar
+                      </Typography>
+                      {deleteProvided.placeholder}
+                    </Box>
+                  )}
+                </Droppable>
               </Stack>
             )}
           </Droppable>

@@ -23,6 +23,8 @@ import {
   setTaskStatusWithDrag,
   moveTaskOrderAsync,
   moveColumnOrderAsync,
+  deleteTaskAsync,
+  setActiveTask,
 } from "../redux/reducers/boards/boards.reducer";
 import {
   setIsNewBoardModalEditMode,
@@ -124,6 +126,12 @@ export const ActiveBoardPage = () => {
 
   const onDragTask = ({ destination, source, draggableId }: DropResult) => {
     if (!destination || !activeBoard) return;
+    if (destination.droppableId.startsWith("delete-")) {
+      dispatch(deleteTaskAsync(draggableId));
+      dispatch(setActiveTask(null));
+      return;
+    }
+
     if (
       destination.index === source.index &&
       destination.droppableId === source.droppableId

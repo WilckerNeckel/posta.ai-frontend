@@ -241,6 +241,19 @@ export class BoardsService {
     }
   }
 
+  static async deleteTask(taskId: string): Promise<void> {
+    try {
+      const boardApi = new BoardApi();
+      await boardApi.deleteTask(taskId);
+    } catch (error) {
+      console.error('❌ Erro ao deletar task:', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
   /**
    * 🚧 FUTURO: Atualizar task existente
    * Descomente e implemente quando backend estiver pronto

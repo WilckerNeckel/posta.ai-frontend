@@ -212,6 +212,19 @@ export const createColumnAsync = createAsyncThunk(
   }
 );
 
+export const deleteTaskAsync = createAsyncThunk(
+  'boards/deleteTaskAsync',
+  async (taskId: string, { rejectWithValue }) => {
+    try {
+      await BoardsService.deleteTask(taskId);
+      return taskId;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao deletar task';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 /**
  * 🚧 FUTURO: Atualizar task via API
  * Descomente quando backend estiver pronto
@@ -777,6 +790,30 @@ export const boardsReducer = createSlice({
       })
       .addCase(createColumnAsync.rejected, (state, action) => {
         state.error = (action.payload as string) || 'Erro ao criar coluna';
+      })
+      // ✅ DELETE TASK (BACKEND)
+      .addCase(deleteTaskAsync.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(deleteTaskAsync.fulfilled, (state, action) => {
+        if (!state.activeBoard) return;
+
+        state.activeBoard.columns = state.activeBoard.columns.map((column) => ({
+          ...column,
+          tasks: column.tasks.filter((task) => task.id !== action.payload),
+        }));
+
+        if (state.activeTask?.id === action.payload) {
+          state.activeTask = null;
+        }
+
+        state.boards.forEach((board) => {
+          if (board.id !== state.activeBoard?.id) return;
+          board.columns = state.activeBoard.columns;
+        });
+      })
+      .addCase(deleteTaskAsync.rejected, (state, action) => {
+        state.error = (action.payload as string) || 'Erro ao deletar task';
       });
 
     // 🚧 FUTURO: Descomente quando backend estiver pronto

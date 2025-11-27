@@ -2,7 +2,7 @@ import { Button, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  deleteTask,
+  deleteTaskAsync,
   setActiveTask,
 } from "../../redux/reducers/boards/boards.reducer";
 import { selectActiveTask } from "../../redux/reducers/boards/boards.selector";
@@ -16,6 +16,7 @@ export const DeleteTaskModal = () => {
   const activeTask = useSelector(selectActiveTask);
   const [showSnack, setShowSnack] = useState(false);
   const isOpen = useSelector(selectShowDeleteTaskModal);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -23,19 +24,24 @@ export const DeleteTaskModal = () => {
     dispatch(setShowDeleteTaskModal(false));
   };
 
-  const onDeleteTask = () => {
+  const onDeleteTask = async () => {
     if (!activeTask) return;
-    dispatch(deleteTask(activeTask));
-    dispatch(setActiveTask(null));
-    onClose();
-    setShowSnack(true);
+    setIsDeleting(true);
+    const result = await dispatch(deleteTaskAsync(activeTask.id));
+    setIsDeleting(false);
+
+    if (deleteTaskAsync.fulfilled.match(result)) {
+      dispatch(setActiveTask(null));
+      onClose();
+      setShowSnack(true);
+    }
   };
 
   return (
     <>
       <BaseModal open={isOpen} onClose={onClose}>
         <Typography variant="h6" fontWeight={700} color="error">
-          Delete this board?
+          Delete this task?
         </Typography>
         <Typography
           variant="body2"
@@ -53,8 +59,9 @@ export const DeleteTaskModal = () => {
             color="error"
             variant="contained"
             onClick={onDeleteTask}
+            disabled={isDeleting}
           >
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </Button>
           <Button
             fullWidth
