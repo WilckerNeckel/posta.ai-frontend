@@ -202,6 +202,19 @@ export class BoardsService {
     }
   }
 
+  static async moveColumn(columnId: string, newPosition: number): Promise<void> {
+    try {
+      const boardApi = new BoardApi();
+      await boardApi.moveColumn(columnId, newPosition);
+    } catch (error) {
+      console.error('❌ Erro ao mover coluna:', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
   /**
    * 🚧 FUTURO: Atualizar task existente
    * Descomente e implemente quando backend estiver pronto

@@ -22,6 +22,7 @@ import {
   setTasksOrder,
   setTaskStatusWithDrag,
   moveTaskOrderAsync,
+  moveColumnOrderAsync,
 } from "../redux/reducers/boards/boards.reducer";
 import {
   setIsNewBoardModalEditMode,
@@ -109,6 +110,16 @@ export const ActiveBoardPage = () => {
       destination.index
     );
     dispatch(setColumnsOder(newColumns));
+
+    const movedColumn = newColumns[destination.index];
+    if (movedColumn) {
+      dispatch(
+        moveColumnOrderAsync({
+          columnId: movedColumn.id,
+          newPosition: destination.index + 1,
+        })
+      );
+    }
   };
 
   const onDragTask = ({ destination, source, draggableId }: DropResult) => {

@@ -179,6 +179,22 @@ export const moveTaskOrderAsync = createAsyncThunk(
   }
 );
 
+export const moveColumnOrderAsync = createAsyncThunk(
+  'boards/moveColumnOrderAsync',
+  async (
+    { columnId, newPosition }: { columnId: string; newPosition: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      await BoardsService.moveColumn(columnId, newPosition);
+      return { columnId, newPosition };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao mover coluna';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 /**
  * 🚧 FUTURO: Atualizar task via API
  * Descomente quando backend estiver pronto
@@ -698,6 +714,10 @@ export const boardsReducer = createSlice({
       // ✅ MOVE TASK ORDER (BACKEND)
       .addCase(moveTaskOrderAsync.rejected, (state, action) => {
         state.error = (action.payload as string) || 'Erro ao mover task';
+      })
+      // ✅ MOVE COLUMN ORDER (BACKEND)
+      .addCase(moveColumnOrderAsync.rejected, (state, action) => {
+        state.error = (action.payload as string) || 'Erro ao mover coluna';
       });
 
     // 🚧 FUTURO: Descomente quando backend estiver pronto

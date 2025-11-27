@@ -56,6 +56,14 @@ export class BoardApi {
         );
     }
 
+    async moveColumn(columnId: string, novaPosicao: number): Promise<void> {
+        await this.httpClient.patch<{ novaPosicao: number }, void>(
+            `/board/column/${columnId}/move`,
+            { novaPosicao },
+            this.getAuthHeaders()
+        );
+    }
+
     private getAuthHeaders(): Record<string, string> {
         const token = localStorage.getItem("accessToken");
         return token ? { Authorization: `Bearer ${token}` } : {};
