@@ -1577,6 +1577,113 @@
                 }
             }
         },
+        "/api/board/task/{id}/move-column": {
+            "patch": {
+                "summary": "Mover tarefa para outra coluna",
+                "tags": ["Board"],
+                "description": "Move a tarefa para outra coluna e posiciona na ordem desejada.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["novaColunaId", "novaPosicao"],
+                                "properties": {
+                                    "novaColunaId": { "type": "string" },
+                                    "novaPosicao": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "schema": { "type": "string" },
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "ID da tarefa"
+                    }
+                ],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "204": { "description": "Default Response" },
+                    "400": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "message",
+                                        "type",
+                                        "errors"
+                                    ],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" },
+                                        "type": { "type": "string" },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "field",
+                                                    "message"
+                                                ],
+                                                "properties": {
+                                                    "field": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "status": { "type": "string" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/auth/login": {
             "post": {
                 "summary": "Autenticar usuário",

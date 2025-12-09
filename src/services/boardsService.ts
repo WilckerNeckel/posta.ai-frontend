@@ -215,6 +215,26 @@ export class BoardsService {
     }
   }
 
+  static async moveTaskToColumn(
+    taskId: string,
+    targetColumnId: string,
+    newPosition: number
+  ): Promise<void> {
+    try {
+      const boardApi = new BoardApi();
+      await boardApi.moveTaskToColumn(taskId, {
+        novaColunaId: targetColumnId,
+        novaPosicao: newPosition,
+      });
+    } catch (error) {
+      console.error('❌ Erro ao mover task para outra coluna:', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
   static async createColumn(columnName: string, disciplineColumn = false): Promise<Column> {
     try {
       const boardApi = new BoardApi();

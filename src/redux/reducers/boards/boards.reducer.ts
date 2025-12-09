@@ -180,6 +180,26 @@ export const moveTaskOrderAsync = createAsyncThunk(
   }
 );
 
+export const moveTaskToColumnAsync = createAsyncThunk(
+  'boards/moveTaskToColumnAsync',
+  async (
+    {
+      taskId,
+      targetColumnId,
+      newPosition,
+    }: { taskId: string; targetColumnId: string; newPosition: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      await BoardsService.moveTaskToColumn(taskId, targetColumnId, newPosition);
+      return { taskId, targetColumnId, newPosition };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao mover task';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 export const moveColumnOrderAsync = createAsyncThunk(
   'boards/moveColumnOrderAsync',
   async (
@@ -766,6 +786,48 @@ export const boardsReducer = createSlice({
       // ✅ MOVE TASK ORDER (BACKEND)
       .addCase(moveTaskOrderAsync.rejected, (state, action) => {
         state.error = (action.payload as string) || 'Erro ao mover task';
+      })
+      // ✅ MOVE TASK TO OTHER COLUMN (BACKEND)
+      .addCase(moveTaskToColumnAsync.rejected, (state, action) => {
+        // Não propaga para erro global para evitar quebra de layout
+        console.error('Erro ao mover task de coluna:', action.payload);
+      })
+      .addCase(moveTaskToColumnAsync.fulfilled, (state, action) => {
+        if (!state.activeBoard) return;
+        const { taskId, targetColumnId, newPosition } = action.payload;
+
+        const sourceColumn = state.activeBoard.columns.find((column) =>
+          column.tasks.some((task) => task.id === taskId)
+        );
+        const targetColumn = state.activeBoard.columns.find(
+          (column) => column.id === targetColumnId
+        );
+
+        if (!sourceColumn || !targetColumn) return;
+
+        const task = sourceColumn.tasks.find((t) => t.id === taskId);
+        if (!task) return;
+
+        // remove from source
+        sourceColumn.tasks = sourceColumn.tasks.filter((t) => t.id !== taskId);
+
+        // update status and insert into target
+        const updatedTask = { ...task, status: targetColumnId };
+        const insertIndex = Math.max(0, Math.min(targetColumn.tasks.length, newPosition - 1));
+        targetColumn.tasks = [
+          ...targetColumn.tasks.slice(0, insertIndex),
+          updatedTask,
+          ...targetColumn.tasks.slice(insertIndex),
+        ];
+
+        if (state.activeTask?.id === taskId) {
+          state.activeTask = updatedTask;
+        }
+
+        state.boards.forEach((board) => {
+          if (board.id !== state.activeBoard?.id) return;
+          board.columns = state.activeBoard.columns;
+        });
       })
       // ✅ MOVE COLUMN ORDER (BACKEND)
       .addCase(moveColumnOrderAsync.rejected, (state, action) => {

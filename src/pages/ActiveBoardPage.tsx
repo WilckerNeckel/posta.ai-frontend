@@ -28,6 +28,7 @@ import {
   deleteTaskAsync,
   setActiveTask,
   deleteColumnAsync,
+  moveTaskToColumnAsync,
 } from "../redux/reducers/boards/boards.reducer";
 import {
   setIsNewBoardModalEditMode,
@@ -174,6 +175,13 @@ export const ActiveBoardPage = () => {
           newPosition: destination.index,
           oldColumnId: source.droppableId,
           newColumnId: destination.droppableId,
+        })
+      );
+      dispatch(
+        moveTaskToColumnAsync({
+          taskId: draggableId,
+          targetColumnId: destination.droppableId,
+          newPosition: destination.index + 1,
         })
       );
     }

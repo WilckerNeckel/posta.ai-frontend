@@ -56,6 +56,17 @@ export class BoardApi {
         );
     }
 
+    async moveTaskToColumn(
+        taskId: string,
+        payload: { novaColunaId: string; novaPosicao: number }
+    ): Promise<void> {
+        await this.httpClient.patch<typeof payload, void>(
+            `/board/task/${taskId}/move-column`,
+            payload,
+            this.getAuthHeaders()
+        );
+    }
+
     async moveColumn(columnId: string, novaPosicao: number): Promise<void> {
         await this.httpClient.patch<{ novaPosicao: number }, void>(
             `/board/column/${columnId}/move`,
