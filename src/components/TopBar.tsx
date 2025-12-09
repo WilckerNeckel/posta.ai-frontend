@@ -6,9 +6,33 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 // @ts-ignore
 import "@fontsource/inter";
+import { useEffect, useState } from "react";
 import { palette } from "../themes/jsonTheme";
+import { UserService } from "../services/userService";
 
 export function TopBar() {
+    const [userName, setUserName] = useState<string>("...");
+
+    useEffect(() => {
+        let cancelled = false;
+        UserService.getCurrentUser()
+            .then((user) => {
+                if (!cancelled) {
+                    setUserName(user.nome || "Usuário");
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar usuário:", error);
+                if (!cancelled) {
+                    setUserName("Usuário");
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar
@@ -50,16 +74,16 @@ export function TopBar() {
                         <Typography
                             color="inherit"
                             sx={{
-                                fontFamily: "Inter, sans-serif",
-                                fontWeight: "bold",
-                                fontSize: "18px",
-                            }}
-                        >
-                            Wicker Neckel
-                        </Typography>
-                    </Box>
-                </Toolbar>
-            </AppBar>
+                            fontFamily: "Inter, sans-serif",
+                            fontWeight: "bold",
+                            fontSize: "18px",
+                        }}
+                    >
+                            {userName}
+                    </Typography>
+                </Box>
+            </Toolbar>
+        </AppBar>
         </Box>
     );
 }

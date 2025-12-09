@@ -33,6 +33,7 @@ import {
     selectActiveBoard,
 } from "../redux/reducers/boards/boards.selector";
 import { Column } from "../config/interfaces/board.interface";
+import { UserService } from "../services/userService";
 
 const drawerWidth = 240;
 
@@ -103,6 +104,7 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const [activeFilters, setActiveFilters] = React.useState<string[]>([]);
+    const [userName, setUserName] = React.useState<string>("...");
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -116,6 +118,20 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
     const filteredTasks = useSelector(selectFilteredTasks);
     const isFiltered = useSelector(selectIsFiltered);
     const activeBoard = useSelector(selectActiveBoard);
+    React.useEffect(() => {
+        let cancelled = false;
+        UserService.getCurrentUser()
+            .then((user) => {
+                if (!cancelled) setUserName(user.nome || "Usuário");
+            })
+            .catch((err) => {
+                console.error("Erro ao carregar usuário (SideDrawer):", err);
+                if (!cancelled) setUserName("Usuário");
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const onFilter = (checked: boolean, filterValue: string) => {
         if (checked) {
@@ -228,7 +244,7 @@ export default function SideDrawer({ children }: DrawerLayoutProps) {
                                 fontSize: "18px",
                             }}
                         >
-                            Wicker Neckel
+                            {userName}
                         </Typography>
                     </Box>
                 </Toolbar>

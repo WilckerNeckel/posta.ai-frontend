@@ -293,6 +293,49 @@
                 }
             }
         },
+        "/api/users/me": {
+            "get": {
+                "summary": "Buscar usuário logado",
+                "tags": ["Users"],
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "id",
+                                        "matricula",
+                                        "disciplinas",
+                                        "role",
+                                        "nome",
+                                        "curso",
+                                        "dataAdmissao"
+                                    ],
+                                    "properties": {
+                                        "id": { "type": "string" },
+                                        "matricula": { "type": "string" },
+                                        "disciplinas": {
+                                            "type": "array",
+                                            "items": { "type": "string" }
+                                        },
+                                        "role": { "type": "string" },
+                                        "nome": { "type": "string" },
+                                        "curso": { "type": "string" },
+                                        "dataAdmissao": { "type": "string", "format": "date-time" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": invalidIdErrorResponseSchema,
+                    "401": unauthorizedErrorResponseSchema,
+                    "500": genericErrorResponseSchema
+                }
+            }
+        },
         "/api/users/{id}": {
             "get": {
                 "summary": "Buscar usuário por ID",
