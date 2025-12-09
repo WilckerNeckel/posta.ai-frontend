@@ -1,6 +1,6 @@
 import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import { DragIndicator, DeleteOutline } from "@mui/icons-material";
-import { Box, CircularProgress, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { CircularProgress, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 // @ts-ignore
 import "@fontsource/inter";
@@ -9,7 +9,6 @@ import { fonts } from "../../themes/jsonTheme";
 
 interface Props {
     name: string;
-    color: string;
     tasksLength: number;
     isDragging: boolean;
     dragHandleProps: DraggableProvidedDragHandleProps | null;
@@ -19,7 +18,6 @@ interface Props {
 
 export const ColumnName = ({
     name,
-    color,
     isDragging,
     tasksLength,
     dragHandleProps,
@@ -36,15 +34,11 @@ export const ColumnName = ({
             direction="row"
             minHeight="1.5rem"
             alignItems="center"
+            px={2}
+            pt={2}
             // onMouseEnter={() => setShowDragIcon(true)}
             // onMouseLeave={() => setShowDragIcon(false)}
         >
-            <Box
-                bgcolor={color}
-                borderRadius="50%"
-                minWidth=".9375rem"
-                minHeight=".9375rem"
-            />
             <Typography
                 variant="body2"
                 fontSize={18}
@@ -52,7 +46,6 @@ export const ColumnName = ({
                 fontFamily={fonts.secondary}
                 // letterSpacing={1}
                 color="white"
-                pt={2}
                 sx={{ flex: 1 }}
             >
                 {`${name} (${tasksLength})`}

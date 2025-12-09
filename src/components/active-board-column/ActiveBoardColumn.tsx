@@ -50,7 +50,6 @@ export const ActiveBoardColumn = ({ column, index, onDeleteColumn, isDeleting = 
         >
           <ColumnName
             name={column.name}
-            color={column.color}
             isDragging={snapshot.isDragging}
             tasksLength={displayTasks.length}
             dragHandleProps={provided.dragHandleProps}
