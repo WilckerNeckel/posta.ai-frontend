@@ -11,7 +11,7 @@
 import { Add } from "@mui/icons-material";
 import { Box, CardActionArea, Stack, Typography } from "@mui/material";
 import { setActiveTask } from "../../redux/reducers/boards/boards.reducer";
-import { setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
+import { setSelectedNewTaskColumnId, setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
 import { useAppDispatch } from "../../redux/store/store";
 import { palette } from "../../themes/jsonTheme";
 
@@ -41,6 +41,7 @@ export const NewTaskButton = ({ columnId, columnName }: Props) => {
     
     // 2. Abre modal de nova task
     dispatch(setShowNewTaskModal(true));
+    dispatch(setSelectedNewTaskColumnId(columnId));
     
     // 📝 NOTA: columnId será selecionado no formulário
     // O NewTaskForm permite escolher a coluna de destino

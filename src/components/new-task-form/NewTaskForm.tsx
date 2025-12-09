@@ -3,12 +3,9 @@ import Typography from "@mui/material/Typography";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { setActiveTask } from "../../redux/reducers/boards/boards.reducer";
-import {
-    selectActiveBoardColumns,
-    selectActiveTask,
-} from "../../redux/reducers/boards/boards.selector";
+import { selectActiveTask } from "../../redux/reducers/boards/boards.selector";
 import { setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
-import { selectShowNewTaskModal } from "../../redux/reducers/ui/ui.selector";
+import { selectSelectedNewTaskColumnId, selectShowNewTaskModal } from "../../redux/reducers/ui/ui.selector";
 import { useAppDispatch } from "../../redux/store/store";
 import {
     NewTaskFormSchema,
@@ -16,9 +13,6 @@ import {
 } from "../../shared/hooks/useNewTaskForm";
 import { BaseModal } from "../base-modal/BaseModal";
 import { MyInput } from "../my-input/MyInput";
-import { If } from "../utils";
-import { StatusValues } from "./StatusValues";
-import { TaskFormSubtasks } from "./TaskFormSubtasks";
 import { fonts, palette } from "../../themes/jsonTheme";
 import brownPin from "../../assets/brown-pin.png";
 
@@ -28,7 +22,7 @@ import "@fontsource/inter";
 export const NewTaskForm = () => {
     const activeTask = useSelector(selectActiveTask);
     const isOpen = useSelector(selectShowNewTaskModal);
-    const status = useSelector(selectActiveBoardColumns);
+    const selectedNewTaskColumnId = useSelector(selectSelectedNewTaskColumnId);
     const title = activeTask ? "Editar tarefa" : "Criar nova tarefa";
     const submitButtonText = activeTask ? "Salvar Mudanças" : "Criar tarefa";
 
@@ -36,11 +30,13 @@ export const NewTaskForm = () => {
 
     const { append, fields, methods, onSubmit, remove } = useNewTaskForm({
         activeTask,
+        selectedColumnId: selectedNewTaskColumnId || undefined,
     });
 
     const closeModal = () => {
         dispatch(setShowNewTaskModal(false));
         dispatch(setActiveTask(null));
+        dispatch(setSelectedNewTaskColumnId(null));
     };
 
     const onFormSubmitted = (data: NewTaskFormSchema) => {
@@ -52,6 +48,13 @@ export const NewTaskForm = () => {
         if (!activeTask) return;
         methods.setValue("columnId", activeTask.status);
     }, [activeTask, methods]);
+
+    useEffect(() => {
+        if (activeTask) return;
+        if (selectedNewTaskColumnId) {
+            methods.setValue("columnId", selectedNewTaskColumnId);
+        }
+    }, [selectedNewTaskColumnId, activeTask, methods]);
 
     return (
         <BaseModal
@@ -96,33 +99,14 @@ export const NewTaskForm = () => {
                 customLabel="Descrição"
                 placeholder="Exemplo: Estudar tópicos apresentados na aula"
             />
+            {/* Campo oculto para garantir submissão do columnId quando vem do botão */}
+            <input type="hidden" {...methods.register("columnId")} />
             {/* <TaskFormSubtasks
         append={append}
         remove={remove}
         fields={fields}
         methods={methods}
       /> */}
-            
-            {/* ============================================ */}
-            {/* SELEÇÃO DE STATUS/COLUNA - HABILITADO      */}
-            {/* ============================================ */}
-            
-            {/* ✅ MODO EDIÇÃO: Usa status atual da task */}
-            <If condition={activeTask}>
-                <StatusValues
-                    status={status}
-                    name="columnId"
-                    defaultValue={activeTask?.status}
-                />
-            </If>
-            
-            {/* ✅ MODO CRIAÇÃO: Permite escolher coluna */}
-            <If condition={!activeTask}>
-                <StatusValues 
-                    status={status} 
-                    name="columnId" 
-                />
-            </If>
             
             <Button 
               variant="contained" 

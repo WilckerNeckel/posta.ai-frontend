@@ -8,6 +8,7 @@ const initialState = {
   isOptionsModalOpen: false,
   isNewBoardModalEditMode: false,
   showNewColumnModal: false,
+  selectedNewTaskColumnId: null as string | null,
 };
 
 export const uiReducer = createSlice({
@@ -35,6 +36,9 @@ export const uiReducer = createSlice({
     setShowNewColumnModal: (state, action: PayloadAction<boolean>) => {
       state.showNewColumnModal = action.payload;
     },
+    setSelectedNewTaskColumnId: (state, action: PayloadAction<string | null>) => {
+      state.selectedNewTaskColumnId = action.payload;
+    },
   },
 });
 
@@ -46,4 +50,5 @@ export const {
   setShowDeleteTaskModal,
   setIsNewBoardModalEditMode,
   setShowNewColumnModal,
+  setSelectedNewTaskColumnId,
 } = uiReducer.actions;

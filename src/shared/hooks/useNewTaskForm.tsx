@@ -35,9 +35,10 @@ export type NewTaskFormSchema = yup.InferType<typeof formSchema>;
 
 interface Props {
   activeTask: Task | null;
+  selectedColumnId?: string;
 }
 
-export const useNewTaskForm = ({ activeTask }: Props) => {
+export const useNewTaskForm = ({ activeTask, selectedColumnId }: Props) => {
   const dispatch = useAppDispatch();
 
   const methods = useForm<NewTaskFormSchema>({
@@ -50,7 +51,7 @@ export const useNewTaskForm = ({ activeTask }: Props) => {
             isCompleted: item.isCompleted,
           }))
         : [],
-      columnId: activeTask ? activeTask.status : undefined,
+      columnId: activeTask ? activeTask.status : selectedColumnId,
       title: activeTask ? activeTask.title : "",
       description: activeTask ? activeTask.description : "",
     },
