@@ -139,7 +139,7 @@ export const NewColumnModal = () => {
         Adicionar Nova Coluna
       </Typography>
       
-      <Typography
+      {/* <Typography
         variant="body2"
         color="textSecondary"
         sx={{ wordBreak: "break-word" }}
@@ -148,7 +148,7 @@ export const NewColumnModal = () => {
           `Adicionar nova coluna ao board "${activeBoard.name}"` :
           "Nenhum board ativo"
         }
-      </Typography>
+      </Typography> */}
 
       <MyInput 
         name="columnName" 
