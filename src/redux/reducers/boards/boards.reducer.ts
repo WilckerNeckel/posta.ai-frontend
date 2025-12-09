@@ -212,6 +212,19 @@ export const createColumnAsync = createAsyncThunk(
   }
 );
 
+export const deleteColumnAsync = createAsyncThunk(
+  'boards/deleteColumnAsync',
+  async (columnId: string, { rejectWithValue }) => {
+    try {
+      await BoardsService.deleteColumn(columnId);
+      return columnId;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao deletar coluna';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 export const deleteTaskAsync = createAsyncThunk(
   'boards/deleteTaskAsync',
   async (taskId: string, { rejectWithValue }) => {
@@ -790,6 +803,33 @@ export const boardsReducer = createSlice({
       })
       .addCase(createColumnAsync.rejected, (state, action) => {
         state.error = (action.payload as string) || 'Erro ao criar coluna';
+      })
+      // ✅ DELETE COLUMN (BACKEND)
+      .addCase(deleteColumnAsync.pending, (state) => {
+        // Mantém erro global inalterado para não quebrar a UI ao tentar deletar
+      })
+      .addCase(deleteColumnAsync.fulfilled, (state, action) => {
+        if (!state.activeBoard) return;
+
+        state.activeBoard.columns = state.activeBoard.columns.filter(
+          (column) => column.id !== action.payload
+        );
+
+        if (state.activeTask?.status === action.payload) {
+          state.activeTask = null;
+        }
+
+        state.filteredTasks = state.filteredTasks.filter(
+          (task) => task.status !== action.payload
+        );
+
+        state.boards.forEach((board) => {
+          if (board.id !== state.activeBoard?.id) return;
+          board.columns = state.activeBoard.columns;
+        });
+      })
+      .addCase(deleteColumnAsync.rejected, (state) => {
+        // Erro tratado localmente na UI; não propaga para erro global
       })
       // ✅ DELETE TASK (BACKEND)
       .addCase(deleteTaskAsync.pending, (state) => {

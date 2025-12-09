@@ -1,6 +1,6 @@
 import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
-import { DragIndicator } from "@mui/icons-material";
-import { Box, Stack, Typography } from "@mui/material";
+import { DragIndicator, DeleteOutline } from "@mui/icons-material";
+import { Box, CircularProgress, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 // @ts-ignore
 import "@fontsource/inter";
@@ -13,6 +13,8 @@ interface Props {
     tasksLength: number;
     isDragging: boolean;
     dragHandleProps: DraggableProvidedDragHandleProps | null;
+    onDelete?: () => void;
+    isDeleting?: boolean;
 }
 
 export const ColumnName = ({
@@ -21,8 +23,11 @@ export const ColumnName = ({
     isDragging,
     tasksLength,
     dragHandleProps,
+    onDelete,
+    isDeleting = false,
 }: Props) => {
     const [showDragIcon, setShowDragIcon] = useState(true);
+    const deleteDisabled = !onDelete || isDeleting;
 
     return (
         <Stack
@@ -35,7 +40,7 @@ export const ColumnName = ({
             // onMouseLeave={() => setShowDragIcon(false)}
         >
             <Box
-                // bgcolor={color}
+                bgcolor={color}
                 borderRadius="50%"
                 minWidth=".9375rem"
                 minHeight=".9375rem"
@@ -52,6 +57,24 @@ export const ColumnName = ({
             >
                 {`${name} (${tasksLength})`}
             </Typography>
+            {onDelete && (
+                <Tooltip title="Excluir coluna">
+                    <span>
+                        <IconButton
+                            size="small"
+                            sx={{ color: "white" }}
+                            onClick={onDelete}
+                            disabled={deleteDisabled}
+                        >
+                            {isDeleting ? (
+                                <CircularProgress size={18} color="inherit" />
+                            ) : (
+                                <DeleteOutline fontSize="small" />
+                            )}
+                        </IconButton>
+                    </span>
+                </Tooltip>
+            )}
             <AnimatePresence>
                 {(showDragIcon || isDragging) && (
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

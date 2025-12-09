@@ -72,6 +72,13 @@ export class BoardApi {
         );
     }
 
+    async deleteColumn(columnId: string): Promise<void> {
+        await this.httpClient.delete<void>(
+            `/board/column/${columnId}`,
+            this.getAuthHeaders()
+        );
+    }
+
     async deleteTask(taskId: string): Promise<void> {
         await this.httpClient.delete<void>(
             `/board/task/${taskId}`,

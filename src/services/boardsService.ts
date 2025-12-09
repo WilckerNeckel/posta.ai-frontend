@@ -254,6 +254,19 @@ export class BoardsService {
     }
   }
 
+  static async deleteColumn(columnId: string): Promise<void> {
+    try {
+      const boardApi = new BoardApi();
+      await boardApi.deleteColumn(columnId);
+    } catch (error) {
+      console.error('❌ Erro ao deletar coluna:', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
   /**
    * 🚧 FUTURO: Atualizar task existente
    * Descomente e implemente quando backend estiver pronto

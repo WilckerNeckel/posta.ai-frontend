@@ -4,16 +4,18 @@ import {
   DropResult,
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
+import { useState } from "react";
 import { Box, CircularProgress, Typography, Button, Alert, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import { ActiveBoardColumn } from "../components/active-board-column/ActiveBoardColumn";
-import { NewColumnButton } from "../components/active-board-column/NewColumnButton";
 import { DeleteTaskModal } from "../components/delete-task-modal/DeleteTaskModal";
 import { NewTaskForm } from "../components/new-task-form/NewTaskForm";
 import { NewColumnModal } from "../components/new-column-modal/NewColumnModal";
 import { TaskDetails } from "../components/task-details/TaskDetails";
 import { NoBoardAlert } from "../components/ui/no-board-alert/NoBoardAlert";
+import { DeleteColumnModal } from "../components/delete-column-modal/DeleteColumnModal";
+import { Toast } from "../components/ui/toast/Toast";
 import { If } from "../components/utils";
 import { For } from "../components/utils/For";
 import { arrayMove } from "../helpers/arrayMove";
@@ -25,6 +27,7 @@ import {
   moveColumnOrderAsync,
   deleteTaskAsync,
   setActiveTask,
+  deleteColumnAsync,
 } from "../redux/reducers/boards/boards.reducer";
 import {
   setIsNewBoardModalEditMode,
@@ -34,6 +37,7 @@ import { selectShowNewTaskModal } from "../redux/reducers/ui/ui.selector";
 import { useAppDispatch } from "../redux/store/store";
 import { CustomScrollBarObject } from "../shared/css/css.global";
 import { useActiveBoardSelector } from "../shared/hooks/useActiveBoardSelector";
+import { Column } from "../config/interfaces/board.interface";
 
 const ColumnsContainer = styled(Box)(({ theme }) => ({
   height: "100%",
@@ -93,6 +97,10 @@ export const ActiveBoardPage = () => {
   } = useActiveBoardSelector();
 
   const dispatch = useAppDispatch();
+  const [columnToDelete, setColumnToDelete] = useState<Column | null>(null);
+  const [isDeletingColumn, setIsDeletingColumn] = useState(false);
+  const [deleteColumnError, setDeleteColumnError] = useState<string | null>(null);
+  const [showDeleteColumnToast, setShowDeleteColumnToast] = useState(false);
 
   const openNewBoardModal = () => {
     dispatch(setIsNewBoardModalOpen(true));
@@ -174,6 +182,38 @@ export const ActiveBoardPage = () => {
   const onDragEnd: OnDragEndResponder = (result) => {
     if (result.type === DragType.TASK) return onDragTask(result);
     if (result.type === DragType.COLUMN) return onDragColumn(result);
+  };
+
+  const handleRequestDeleteColumn = (column: Column) => {
+    setDeleteColumnError(null);
+    setColumnToDelete(column);
+  };
+
+  const handleCloseDeleteColumnModal = () => {
+    if (isDeletingColumn) return;
+    setColumnToDelete(null);
+    setDeleteColumnError(null);
+  };
+
+  const handleConfirmDeleteColumn = async () => {
+    if (!columnToDelete) return;
+
+    setIsDeletingColumn(true);
+    const result = await dispatch(deleteColumnAsync(columnToDelete.id));
+    setIsDeletingColumn(false);
+
+    if (deleteColumnAsync.fulfilled.match(result)) {
+      setColumnToDelete(null);
+      setShowDeleteColumnToast(true);
+    } else {
+      const payloadMessage =
+        (result.payload as string) ||
+        (result.payload as { message?: string })?.message ||
+        result.error?.message;
+      setDeleteColumnError(
+        payloadMessage || "Erro ao deletar coluna. Tente novamente."
+      );
+    }
   };
 
   // ============================================
@@ -281,7 +321,15 @@ export const ActiveBoardPage = () => {
             <For
               each={activeBoard.columns}
               render={(col, i) => (
-                <ActiveBoardColumn key={col.id} column={col} index={i} />
+                <ActiveBoardColumn
+                  key={col.id}
+                  column={col}
+                  index={i}
+                  onDeleteColumn={handleRequestDeleteColumn}
+                  isDeleting={
+                    isDeletingColumn && columnToDelete?.id === col.id
+                  }
+                />
               )}
             />
             {provided.placeholder}
@@ -292,6 +340,20 @@ export const ActiveBoardPage = () => {
               <NewTaskForm />
             </If>
             <NewColumnModal />
+            <DeleteColumnModal
+              open={Boolean(columnToDelete)}
+              columnName={columnToDelete?.name}
+              tasksCount={columnToDelete?.tasks.length}
+              isDeleting={isDeletingColumn}
+              errorMessage={deleteColumnError}
+              onClose={handleCloseDeleteColumnModal}
+              onConfirm={handleConfirmDeleteColumn}
+            />
+            <Toast
+              isOpen={showDeleteColumnToast}
+              message="Coluna removida com sucesso"
+              onClose={() => setShowDeleteColumnToast(false)}
+            />
           </ColumnsContainer>
         )}
       </Droppable>

@@ -16,9 +16,11 @@ import { Box, Typography } from "@mui/material";
 interface Props {
   column: Column;
   index: number;
+  onDeleteColumn: (column: Column) => void;
+  isDeleting?: boolean;
 }
 
-export const ActiveBoardColumn = ({ column, index }: Props) => {
+export const ActiveBoardColumn = ({ column, index, onDeleteColumn, isDeleting = false }: Props) => {
   const filteredTasks = useSelector(selectFilteredTasks);
   const isFiltered = useSelector(selectIsFiltered);
 
@@ -52,6 +54,8 @@ export const ActiveBoardColumn = ({ column, index }: Props) => {
             isDragging={snapshot.isDragging}
             tasksLength={displayTasks.length}
             dragHandleProps={provided.dragHandleProps}
+            onDelete={() => onDeleteColumn(column)}
+            isDeleting={isDeleting}
    
           />
           <Divider
