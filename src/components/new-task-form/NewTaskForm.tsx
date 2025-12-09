@@ -94,7 +94,7 @@ export const NewTaskForm = () => {
                 multiline
                 name="description"
                 customLabel="Descrição"
-                placeholder="e.g. It's always good to take a break. I'll be back in 5 minutes."
+                placeholder="Exemplo: Estudar tópicos apresentados na aula"
             />
             {/* <TaskFormSubtasks
         append={append}
