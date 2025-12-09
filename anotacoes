@@ -1,11 +1,11 @@
 ### Implementados
 implementar deleção de coluna
 implementar arrastar tarefa para outra coluna
-
 melhorar criação de task, não precisar colocar a coluna da task
+integrar nome do usuário corretamente
+arrumar place holder da descriação de criação de tarefa
+
 melhorar deleção de coluna, área só aparecer quando eu arrasto
 não permitir deletar coluna criada na tabela do professor
 não permitir deletar/alterar/mover coluna da disciplina
-integrar nome do usuário corretamente
-arrumar place holder da descriação de criação de tarefa
 integrar websocket

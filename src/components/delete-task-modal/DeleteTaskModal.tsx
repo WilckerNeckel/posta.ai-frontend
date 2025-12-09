@@ -5,7 +5,7 @@ import {
   deleteTaskAsync,
   setActiveTask,
 } from "../../redux/reducers/boards/boards.reducer";
-import { selectActiveTask } from "../../redux/reducers/boards/boards.selector";
+import { selectActiveBoard, selectActiveTask } from "../../redux/reducers/boards/boards.selector";
 import { setShowDeleteTaskModal } from "../../redux/reducers/ui/ui.reducer";
 import { selectShowDeleteTaskModal } from "../../redux/reducers/ui/ui.selector";
 import { useAppDispatch } from "../../redux/store/store";
@@ -14,9 +14,14 @@ import { Toast } from "../ui/toast/Toast";
 
 export const DeleteTaskModal = () => {
   const activeTask = useSelector(selectActiveTask);
+  const activeBoard = useSelector(selectActiveBoard);
   const [showSnack, setShowSnack] = useState(false);
   const isOpen = useSelector(selectShowDeleteTaskModal);
   const [isDeleting, setIsDeleting] = useState(false);
+  const activeTaskColumn = activeBoard?.columns.find(
+    (col) => col.id === activeTask?.status
+  );
+  const isDisciplineTask = Boolean(activeTaskColumn?.disciplineColumn);
 
   const dispatch = useAppDispatch();
 
@@ -25,7 +30,7 @@ export const DeleteTaskModal = () => {
   };
 
   const onDeleteTask = async () => {
-    if (!activeTask) return;
+    if (!activeTask || isDisciplineTask) return;
     setIsDeleting(true);
     const result = await dispatch(deleteTaskAsync(activeTask.id));
     setIsDeleting(false);
@@ -43,6 +48,11 @@ export const DeleteTaskModal = () => {
         <Typography variant="h6" fontWeight={700} color="error">
           Delete this task?
         </Typography>
+        {isDisciplineTask && (
+          <Typography variant="body2" color="error" fontWeight={600}>
+            Tarefas de disciplina são protegidas e não podem ser removidas.
+          </Typography>
+        )}
         <Typography
           variant="body2"
           color="textSecondary"
@@ -59,7 +69,7 @@ export const DeleteTaskModal = () => {
             color="error"
             variant="contained"
             onClick={onDeleteTask}
-            disabled={isDeleting}
+            disabled={isDeleting || isDisciplineTask}
           >
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>

@@ -12,6 +12,7 @@ import { setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
 interface Props {
     task: Task;
     index: number;
+    isDiscipline?: boolean;
 }
 
 export const CustomPaper = styled(Paper)(({ theme }) => ({
@@ -26,7 +27,7 @@ export const CustomPaper = styled(Paper)(({ theme }) => ({
     },
 }));
 
-export const ColumnTaskItem = ({ task, index }: Props) => {
+export const ColumnTaskItem = ({ task, index, isDiscipline = false }: Props) => {
     const subtasksCompleted = useMemo(
         () => task.subtasks.filter((subtask) => subtask.isCompleted).length,
         [task.subtasks]
@@ -35,16 +36,17 @@ export const ColumnTaskItem = ({ task, index }: Props) => {
     const dispatch = useAppDispatch();
 
     const handleTaskClick = () => {
+        if (isDiscipline) return;
         dispatch(setActiveTask(task));
         dispatch(setShowNewTaskModal(true));
     };
 
     return (
-        <Draggable draggableId={task.id} index={index}>
+        <Draggable draggableId={task.id} index={index} isDragDisabled={isDiscipline}>
             {(provided) => (
                 <CustomPaper
                     key={task.id}
-                    sx={{ cursor: "pointer", mt: 3, mb: 2, mx: 1, height: 160}}
+                    sx={{ cursor: isDiscipline ? "default" : "pointer", mt: 3, mb: 2, mx: 1, height: 160}}
                     onClick={handleTaskClick}
                     ref={provided.innerRef}
                     {...provided.draggableProps}

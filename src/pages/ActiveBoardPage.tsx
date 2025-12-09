@@ -135,7 +135,21 @@ export const ActiveBoardPage = () => {
 
   const onDragTask = ({ destination, source, draggableId }: DropResult) => {
     if (!destination || !activeBoard) return;
+    const sourceColumn = activeBoard.columns.find(
+      (col) => col.id === source.droppableId
+    );
+    const destColumn = activeBoard.columns.find(
+      (col) => col.id === destination.droppableId
+    );
+    // Bloqueia qualquer interação envolvendo colunas de disciplina
+    if (sourceColumn?.disciplineColumn || destColumn?.disciplineColumn) return;
+
     if (destination.droppableId.startsWith("delete-")) {
+      const deleteColumnId = destination.droppableId.replace("delete-", "");
+      const deleteColumn = activeBoard.columns.find(
+        (col) => col.id === deleteColumnId
+      );
+      if (deleteColumn?.disciplineColumn) return;
       dispatch(deleteTaskAsync(draggableId));
       dispatch(setActiveTask(null));
       return;

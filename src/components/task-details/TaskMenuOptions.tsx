@@ -6,14 +6,23 @@ import {
   setShowDeleteTaskModal,
   setShowNewTaskModal,
 } from "../../redux/reducers/ui/ui.reducer";
+import { useSelector } from "react-redux";
+import { selectActiveBoard, selectActiveTask } from "../../redux/reducers/boards/boards.selector";
 
 export const TaskMenuOptions = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
 
   const dispatch = useAppDispatch();
+  const activeTask = useSelector(selectActiveTask);
+  const activeBoard = useSelector(selectActiveBoard);
+  const activeTaskColumn = activeBoard?.columns.find(
+    (col) => col.id === activeTask?.status
+  );
+  const isDisciplineTask = Boolean(activeTaskColumn?.disciplineColumn);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (isDisciplineTask) return;
     setAnchorEl(event.currentTarget);
   };
 
@@ -22,10 +31,12 @@ export const TaskMenuOptions = () => {
   };
 
   const handleEditTask = () => {
+    if (isDisciplineTask) return;
     dispatch(setShowNewTaskModal(true));
   };
 
   const handleDeleteTask = () => {
+    if (isDisciplineTask) return;
     dispatch(setShowDeleteTaskModal(true));
   };
 
@@ -35,6 +46,7 @@ export const TaskMenuOptions = () => {
         size="small"
         onClick={handleClick}
         sx={{ color: "customGrey.main" }}
+        disabled={isDisciplineTask}
       >
         <MoreVert />
       </IconButton>
