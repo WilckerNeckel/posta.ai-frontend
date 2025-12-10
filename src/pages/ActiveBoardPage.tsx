@@ -288,12 +288,10 @@ export const ActiveBoardPage = () => {
   }, [userDisciplines]);
 
   const canManageDisciplineColumn = (column: Column) => {
-    console.log("column", column)
     if (!column.disciplineColumn) return true;
     if (currentUser?.role !== "professor") return false;
+    if (column.userId === currentUser?.id) return true;
     const d = disciplineMapByName.get(column.name.toLowerCase().trim());
-    console.log("discipline for column", d)
-    console.log("can manage?", d && d.professorId === currentUser?.id)
     return Boolean(d && d.professorId === currentUser?.id);
   };
 
