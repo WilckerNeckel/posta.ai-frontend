@@ -4,7 +4,7 @@ import {
   DropResult,
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Box, CircularProgress, Typography, Button, Alert, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
@@ -39,6 +39,10 @@ import { useAppDispatch } from "../redux/store/store";
 import { CustomScrollBarObject } from "../shared/css/css.global";
 import { useActiveBoardSelector } from "../shared/hooks/useActiveBoardSelector";
 import { Column } from "../config/interfaces/board.interface";
+import { UserService } from "../services/userService";
+import { DisciplineService } from "../services/disciplineService";
+import { DisciplineDTO } from "../backend/discipline/DisciplineApi";
+import { UserDTO } from "../backend/user/UserApi";
 
 const ColumnsContainer = styled(Box)(({ theme }) => ({
   height: "100%",
@@ -102,6 +106,9 @@ export const ActiveBoardPage = () => {
   const [isDeletingColumn, setIsDeletingColumn] = useState(false);
   const [deleteColumnError, setDeleteColumnError] = useState<string | null>(null);
   const [showDeleteColumnToast, setShowDeleteColumnToast] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserDTO | null>(null);
+  const [userDisciplines, setUserDisciplines] = useState<DisciplineDTO[]>([]);
+  console.log("user disciplines", userDisciplines);
 
   const openNewBoardModal = () => {
     dispatch(setIsNewBoardModalOpen(true));
@@ -141,15 +148,22 @@ export const ActiveBoardPage = () => {
     const destColumn = activeBoard.columns.find(
       (col) => col.id === destination.droppableId
     );
-    // Bloqueia qualquer interação envolvendo colunas de disciplina
-    if (sourceColumn?.disciplineColumn || destColumn?.disciplineColumn) return;
+    const canManageSource = sourceColumn
+      ? canManageDisciplineColumn(sourceColumn)
+      : false;
+    const canManageDest = destColumn ? canManageDisciplineColumn(destColumn) : false;
+    const involvesDiscipline =
+      sourceColumn?.disciplineColumn || destColumn?.disciplineColumn;
+
+    // Bloqueia se envolve disciplina e o usuário não pode gerenciar
+    if (involvesDiscipline && (!canManageSource || !canManageDest)) return;
 
     if (destination.droppableId.startsWith("delete-")) {
       const deleteColumnId = destination.droppableId.replace("delete-", "");
       const deleteColumn = activeBoard.columns.find(
         (col) => col.id === deleteColumnId
       );
-      if (deleteColumn?.disciplineColumn) return;
+      if (deleteColumn?.disciplineColumn && !canManageDisciplineColumn(deleteColumn)) return;
       dispatch(deleteTaskAsync(draggableId));
       dispatch(setActiveTask(null));
       return;
@@ -236,6 +250,42 @@ export const ActiveBoardPage = () => {
         payloadMessage || "Erro ao deletar coluna. Tente novamente."
       );
     }
+  };
+
+  useEffect(() => {
+    UserService.getCurrentUser()
+      .then((user) => setCurrentUser(user))
+      .catch((err) => {
+        console.error("Erro ao carregar usuário:", err);
+      });
+
+    DisciplineService.getMyDisciplines()
+      .then((disciplines) => setUserDisciplines(disciplines))
+      .catch((err) => {
+        console.error("Erro ao carregar disciplinas do usuário:", err);
+      });
+  }, []);
+
+  const disciplineMapByName = useMemo(() => {
+    const map = new Map<string, DisciplineDTO>();
+    userDisciplines.forEach((d) => {
+      map.set(d.name.toLowerCase().trim(), d);
+    });
+    return map;
+  }, [userDisciplines]);
+
+  const canManageDisciplineColumn = (column: Column) => {
+    console.log("column", column)
+    if (!column.disciplineColumn) return true;
+    if (currentUser?.role !== "professor") return false;
+    const d = disciplineMapByName.get(column.name.toLowerCase().trim());
+    console.log("discipline for column", d)
+    return Boolean(d && d.professorId === currentUser?.id);
+  };
+
+  const getDisciplineIdForColumn = (column: Column) => {
+    const d = disciplineMapByName.get(column.name.toLowerCase().trim());
+    return d?.id;
   };
 
   // ============================================
@@ -351,6 +401,8 @@ export const ActiveBoardPage = () => {
                   isDeleting={
                     isDeletingColumn && columnToDelete?.id === col.id
                   }
+                  canManageDiscipline={canManageDisciplineColumn(col)}
+                  disciplineId={getDisciplineIdForColumn(col)}
                 />
               )}
             />

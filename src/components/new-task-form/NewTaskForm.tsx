@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { setActiveTask } from "../../redux/reducers/boards/boards.reducer";
 import { selectActiveTask } from "../../redux/reducers/boards/boards.selector";
-import { setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
-import { selectSelectedNewTaskColumnId, selectShowNewTaskModal } from "../../redux/reducers/ui/ui.selector";
+import { setSelectedNewTaskDisciplineId, setSelectedNewTaskIsTeacherDiscipline, setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
+import { selectSelectedNewTaskColumnId, selectSelectedNewTaskDisciplineId, selectSelectedNewTaskIsTeacherDiscipline, selectShowNewTaskModal } from "../../redux/reducers/ui/ui.selector";
 import { useAppDispatch } from "../../redux/store/store";
 import {
     NewTaskFormSchema,
@@ -23,6 +23,8 @@ export const NewTaskForm = () => {
     const activeTask = useSelector(selectActiveTask);
     const isOpen = useSelector(selectShowNewTaskModal);
     const selectedNewTaskColumnId = useSelector(selectSelectedNewTaskColumnId);
+    const selectedNewTaskDisciplineId = useSelector(selectSelectedNewTaskDisciplineId);
+    const isTeacherDiscipline = useSelector(selectSelectedNewTaskIsTeacherDiscipline);
     const title = activeTask ? "Editar tarefa" : "Criar nova tarefa";
     const submitButtonText = activeTask ? "Salvar Mudanças" : "Criar tarefa";
 
@@ -31,12 +33,16 @@ export const NewTaskForm = () => {
     const { append, fields, methods, onSubmit, remove } = useNewTaskForm({
         activeTask,
         selectedColumnId: selectedNewTaskColumnId || undefined,
+        teacherDisciplineId: selectedNewTaskDisciplineId || undefined,
+        isTeacherDisciplineColumn: isTeacherDiscipline,
     });
 
     const closeModal = () => {
         dispatch(setShowNewTaskModal(false));
         dispatch(setActiveTask(null));
         dispatch(setSelectedNewTaskColumnId(null));
+        dispatch(setSelectedNewTaskDisciplineId(null));
+        dispatch(setSelectedNewTaskIsTeacherDiscipline(false));
     };
 
     const onFormSubmitted = (data: NewTaskFormSchema) => {

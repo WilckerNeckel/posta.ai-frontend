@@ -37,6 +37,14 @@ export class BoardApi {
         );
     }
 
+    async teacherPostTask(payload: { task: { titulo: string; descricao: string; columnId: string }; disciplineId: string }): Promise<BoardTaskDTO> {
+        return this.httpClient.post<typeof payload, BoardTaskDTO>(
+            "/board/task/teacher-post",
+            payload,
+            this.getAuthHeaders()
+        );
+    }
+
     async updateTask(
         taskId: string,
         payload: { titulo?: string; descricao?: string }

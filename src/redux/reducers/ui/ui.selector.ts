@@ -22,3 +22,9 @@ export const selectShowNewColumnModal = (state: RootState) =>
 
 export const selectSelectedNewTaskColumnId = (state: RootState) =>
   state.ui.selectedNewTaskColumnId;
+
+export const selectSelectedNewTaskDisciplineId = (state: RootState) =>
+  state.ui.selectedNewTaskDisciplineId;
+
+export const selectSelectedNewTaskIsTeacherDiscipline = (state: RootState) =>
+  state.ui.selectedNewTaskIsTeacherDiscipline;

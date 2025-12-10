@@ -9,6 +9,8 @@ const initialState = {
   isNewBoardModalEditMode: false,
   showNewColumnModal: false,
   selectedNewTaskColumnId: null as string | null,
+  selectedNewTaskDisciplineId: null as string | null,
+  selectedNewTaskIsTeacherDiscipline: false,
 };
 
 export const uiReducer = createSlice({
@@ -39,6 +41,12 @@ export const uiReducer = createSlice({
     setSelectedNewTaskColumnId: (state, action: PayloadAction<string | null>) => {
       state.selectedNewTaskColumnId = action.payload;
     },
+    setSelectedNewTaskDisciplineId: (state, action: PayloadAction<string | null>) => {
+      state.selectedNewTaskDisciplineId = action.payload;
+    },
+    setSelectedNewTaskIsTeacherDiscipline: (state, action: PayloadAction<boolean>) => {
+      state.selectedNewTaskIsTeacherDiscipline = action.payload;
+    },
   },
 });
 
@@ -51,4 +59,6 @@ export const {
   setIsNewBoardModalEditMode,
   setShowNewColumnModal,
   setSelectedNewTaskColumnId,
+  setSelectedNewTaskDisciplineId,
+  setSelectedNewTaskIsTeacherDiscipline,
 } = uiReducer.actions;

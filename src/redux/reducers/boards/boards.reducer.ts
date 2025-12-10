@@ -200,6 +200,32 @@ export const moveTaskToColumnAsync = createAsyncThunk(
   }
 );
 
+export const teacherPostTaskAsync = createAsyncThunk(
+  'boards/teacherPostTaskAsync',
+  async (
+    {
+      title,
+      description,
+      columnId,
+      subtasks = [],
+      disciplineId,
+    }: CreateTaskBody & { disciplineId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const task = await BoardsService.teacherPostTask(
+        { title, description, columnId, subtasks },
+        disciplineId
+      );
+      return task;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Erro ao criar task de disciplina';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 export const moveColumnOrderAsync = createAsyncThunk(
   'boards/moveColumnOrderAsync',
   async (
@@ -823,6 +849,24 @@ export const boardsReducer = createSlice({
         if (state.activeTask?.id === taskId) {
           state.activeTask = updatedTask;
         }
+
+        state.boards.forEach((board) => {
+          if (board.id !== state.activeBoard?.id) return;
+          board.columns = state.activeBoard.columns;
+        });
+      })
+      // ✅ TEACHER POST TASK (DISCIPLINE)
+      .addCase(teacherPostTaskAsync.rejected, (state, action) => {
+        console.error('Erro ao criar task de disciplina (professor):', action.payload);
+      })
+      .addCase(teacherPostTaskAsync.fulfilled, (state, action) => {
+        if (!state.activeBoard) return;
+        const column = state.activeBoard.columns.find(
+          (columnItem) => columnItem.id === action.payload.status
+        );
+        if (!column) return;
+
+        column.tasks.push(action.payload);
 
         state.boards.forEach((board) => {
           if (board.id !== state.activeBoard?.id) return;

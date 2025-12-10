@@ -168,6 +168,29 @@ export class BoardsService {
     }
   }
 
+  static async teacherPostTask(taskData: CreateTaskBody, disciplineId: string): Promise<Task> {
+    try {
+      const boardApi = new BoardApi();
+      const payload = {
+        task: {
+          titulo: taskData.title,
+          descricao: taskData.description || "",
+          columnId: taskData.columnId,
+        },
+        disciplineId,
+      };
+
+      const newTaskDTO = await boardApi.teacherPostTask(payload);
+      return this.mapTask(newTaskDTO, taskData.columnId);
+    } catch (error) {
+      console.error('❌ Erro ao criar task de disciplina (professor):', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
   static async updateTask(taskData: UpdateTaskBody): Promise<Task> {
     try {
       const boardApi = new BoardApi();

@@ -22,6 +22,8 @@ interface Props {
     index: number;
     onDeleteColumn: (column: Column) => void;
     isDeleting?: boolean;
+    canManageDiscipline?: boolean;
+    disciplineId?: string;
 }
 
 export const ActiveBoardColumn = ({
@@ -29,6 +31,8 @@ export const ActiveBoardColumn = ({
     index,
     onDeleteColumn,
     isDeleting = false,
+    canManageDiscipline = false,
+    disciplineId,
 }: Props) => {
     const filteredTasks = useSelector(selectFilteredTasks);
     const isFiltered = useSelector(selectIsFiltered);
@@ -92,7 +96,7 @@ export const ActiveBoardColumn = ({
                     <Droppable
                         droppableId={column.id}
                         type={DragType.TASK}
-                        isDropDisabled={column.disciplineColumn}
+                        isDropDisabled={column.disciplineColumn && !canManageDiscipline}
                     >
                         {(dropProvided) => (
                             <Stack
@@ -115,16 +119,27 @@ export const ActiveBoardColumn = ({
                                             key={task.id}
                                             index={taskIndex}
                                             isDiscipline={
-                                                column.disciplineColumn
+                                                column.disciplineColumn &&
+                                                !canManageDiscipline
                                             }
                                         />
                                     )}
                                 />
                                 {dropProvided.placeholder}
-                                <If condition={!column.disciplineColumn}>
+                                <If
+                                    condition={
+                                        !column.disciplineColumn ||
+                                        canManageDiscipline
+                                    }
+                                >
                                     <NewTaskButton
                                         columnId={column.id}
                                         columnName={column.name}
+                                        disciplineId={disciplineId}
+                                        isTeacherDiscipline={
+                                            column.disciplineColumn &&
+                                            canManageDiscipline
+                                        }
                                     />
                                     <Droppable
                                         droppableId={`delete-${column.id}`}

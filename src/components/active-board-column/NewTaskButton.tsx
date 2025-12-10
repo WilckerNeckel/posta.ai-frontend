@@ -11,16 +11,18 @@
 import { Add } from "@mui/icons-material";
 import { Box, CardActionArea, Stack, Typography } from "@mui/material";
 import { setActiveTask } from "../../redux/reducers/boards/boards.reducer";
-import { setSelectedNewTaskColumnId, setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
+import { setSelectedNewTaskColumnId, setSelectedNewTaskDisciplineId, setSelectedNewTaskIsTeacherDiscipline, setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
 import { useAppDispatch } from "../../redux/store/store";
 import { palette } from "../../themes/jsonTheme";
 
 interface Props {
   columnId: string;
   columnName: string;
+  disciplineId?: string;
+  isTeacherDiscipline?: boolean;
 }
 
-export const NewTaskButton = ({ columnId, columnName }: Props) => {
+export const NewTaskButton = ({ columnId, columnName, disciplineId, isTeacherDiscipline = false }: Props) => {
   const dispatch = useAppDispatch();
 
   // ============================================
@@ -42,6 +44,8 @@ export const NewTaskButton = ({ columnId, columnName }: Props) => {
     // 2. Abre modal de nova task
     dispatch(setShowNewTaskModal(true));
     dispatch(setSelectedNewTaskColumnId(columnId));
+    dispatch(setSelectedNewTaskDisciplineId(disciplineId ?? null));
+    dispatch(setSelectedNewTaskIsTeacherDiscipline(isTeacherDiscipline));
     
     // 📝 NOTA: columnId será selecionado no formulário
     // O NewTaskForm permite escolher a coluna de destino

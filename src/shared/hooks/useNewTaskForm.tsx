@@ -5,7 +5,9 @@ import { Task } from "../../config/interfaces/board.interface";
 import {
   createTaskAsync,
   updateTaskAsync,
+  teacherPostTaskAsync,
 } from "../../redux/reducers/boards/boards.reducer";
+import { CreateTaskBody } from "../../redux/reducers/boards/request.interfaces";
 import { UpdateTaskBody } from "../../redux/reducers/boards/request.interfaces";
 import { useAppDispatch } from "../../redux/store/store";
 import {
@@ -36,9 +38,16 @@ export type NewTaskFormSchema = yup.InferType<typeof formSchema>;
 interface Props {
   activeTask: Task | null;
   selectedColumnId?: string;
+  teacherDisciplineId?: string;
+  isTeacherDisciplineColumn?: boolean;
 }
 
-export const useNewTaskForm = ({ activeTask, selectedColumnId }: Props) => {
+export const useNewTaskForm = ({
+  activeTask,
+  selectedColumnId,
+  teacherDisciplineId,
+  isTeacherDisciplineColumn = false,
+}: Props) => {
   const dispatch = useAppDispatch();
 
   const methods = useForm<NewTaskFormSchema>({
@@ -63,14 +72,24 @@ export const useNewTaskForm = ({ activeTask, selectedColumnId }: Props) => {
   });
 
   const onCreateTask = async (data: NewTaskFormSchema) => {
-    await dispatch(
-      createTaskAsync({
-        title: data.title,
-        columnId: data.columnId,
-        description: data.description,
-        subtasks: data.subtasks.map((subtask) => subtask.title),
-      })
-    );
+    const payload: CreateTaskBody = {
+      title: data.title,
+      columnId: data.columnId,
+      description: data.description,
+      subtasks: data.subtasks.map((subtask) => subtask.title),
+    };
+
+    if (isTeacherDisciplineColumn && teacherDisciplineId) {
+      await dispatch(
+        teacherPostTaskAsync({
+          ...payload,
+          disciplineId: teacherDisciplineId,
+        })
+      );
+      return;
+    }
+
+    await dispatch(createTaskAsync(payload));
   };
 
   const onUpdateTask = async (data: NewTaskFormSchema) => {
