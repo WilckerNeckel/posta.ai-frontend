@@ -307,9 +307,16 @@ export const ActiveBoardPage = () => {
     };
 
     socket.on("DISCIPLINE_TASK_CREATED", handler);
+    socket.on("DISCIPLINE_TASK_DELETED", ({ taskId, disciplineName, taskTitle }) => {
+      dispatch({
+        type: "boards/removeTaskFromSocket",
+        payload: { taskId, disciplineName, taskTitle },
+      });
+    });
 
     return () => {
       socket.off("DISCIPLINE_TASK_CREATED", handler);
+      socket.off("DISCIPLINE_TASK_DELETED");
     };
   }, [dispatch, activeBoard?.columns, currentUser?.id]);
 

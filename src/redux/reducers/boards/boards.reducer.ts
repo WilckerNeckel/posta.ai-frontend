@@ -988,6 +988,48 @@ export const boardsReducer = createSlice({
           state.activeTask = null;
         }
       })
+      // ✅ SOCKET: DELETE TASK (DISCIPLINE)
+      .addCase(
+        "boards/removeTaskFromSocket" as any,
+        (
+          state,
+          action: PayloadAction<{
+            taskId: string;
+            disciplineName?: string;
+            taskTitle?: string;
+          }>
+        ) => {
+          if (!state.activeBoard) return;
+
+          state.activeBoard.columns = state.activeBoard.columns.map(
+            (column) => {
+              const shouldMatchByTitle =
+                column.disciplineColumn &&
+                action.payload.disciplineName &&
+                column.name.toLowerCase().trim() ===
+                  action.payload.disciplineName.toLowerCase().trim();
+
+              const filteredTasks = column.tasks.filter((task) => {
+                if (task.id === action.payload.taskId) return false;
+                if (
+                  shouldMatchByTitle &&
+                  action.payload.taskTitle &&
+                  task.title === action.payload.taskTitle
+                ) {
+                  return false;
+                }
+                return true;
+              });
+
+              return { ...column, tasks: filteredTasks };
+            }
+          );
+
+          if (state.activeTask?.id === action.payload.taskId) {
+            state.activeTask = null;
+          }
+        }
+      )
       // ✅ MOVE COLUMN ORDER (BACKEND)
       .addCase(moveColumnOrderAsync.rejected, (state, action) => {
         state.error = (action.payload as string) || 'Erro ao mover coluna';
@@ -1133,6 +1175,7 @@ export const {
   clearFilter,
   addNewColumn,
   addTaskFromSocketReducer,
+  // pseudo action for socket delete
 } = boardsReducer.actions;
 
 export const addTaskFromSocket = (taskDTO: {
