@@ -1030,6 +1030,62 @@ export const boardsReducer = createSlice({
           }
         }
       )
+      .addCase(
+        "boards/updateTaskFromSocket" as any,
+        (
+          state,
+          action: PayloadAction<{
+            id: string;
+            titulo: string;
+            descricao: string;
+            columnId: string;
+            disciplineName?: string;
+            previousTitle?: string;
+          }>
+        ) => {
+          if (!state.activeBoard) return;
+
+          state.activeBoard.columns = state.activeBoard.columns.map(
+            (column) => {
+              const shouldMatchByTitle =
+                column.disciplineColumn &&
+                action.payload.disciplineName &&
+                column.name.toLowerCase().trim() ===
+                  action.payload.disciplineName.toLowerCase().trim();
+
+              const tasks = column.tasks.map((task) => {
+                const matchById =
+                  task.id === action.payload.id &&
+                  column.id === action.payload.columnId;
+                const matchByTitle =
+                  shouldMatchByTitle &&
+                  action.payload.previousTitle &&
+                  task.title === action.payload.previousTitle;
+
+                if (matchById || matchByTitle) {
+                  return {
+                    ...task,
+                    title: action.payload.titulo,
+                    description: action.payload.descricao,
+                  };
+                }
+                return task;
+              });
+
+              return { ...column, tasks };
+            }
+          );
+
+          if (state.activeTask?.id === action.payload.id) {
+            const updatedTask = state.activeBoard.columns
+              .flatMap((col) => col.tasks)
+              .find((task) => task.id === action.payload.id);
+            if (updatedTask) {
+              state.activeTask = updatedTask;
+            }
+          }
+        }
+      )
       // ✅ MOVE COLUMN ORDER (BACKEND)
       .addCase(moveColumnOrderAsync.rejected, (state, action) => {
         state.error = (action.payload as string) || 'Erro ao mover coluna';

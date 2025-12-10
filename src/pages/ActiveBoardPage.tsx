@@ -313,10 +313,27 @@ export const ActiveBoardPage = () => {
         payload: { taskId, disciplineName, taskTitle },
       });
     });
+    socket.on(
+      "DISCIPLINE_TASK_UPDATED",
+      ({ id, titulo, descricao, columnId, disciplineName, previousTitle }) => {
+        dispatch({
+          type: "boards/updateTaskFromSocket",
+          payload: {
+            id,
+            titulo,
+            descricao,
+            columnId,
+            disciplineName,
+            previousTitle,
+          },
+        });
+      }
+    );
 
     return () => {
       socket.off("DISCIPLINE_TASK_CREATED", handler);
       socket.off("DISCIPLINE_TASK_DELETED");
+      socket.off("DISCIPLINE_TASK_UPDATED");
     };
   }, [dispatch, activeBoard?.columns, currentUser?.id]);
 

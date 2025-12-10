@@ -12,4 +12,13 @@ export type WebSocketPayloads = {
     columnId: string;
     taskTitle: string;
   };
+  DISCIPLINE_TASK_UPDATED: {
+    id: string;
+    titulo: string;
+    descricao: string;
+    columnId: string;
+    disciplineId: string;
+    disciplineName: string;
+    previousTitle: string;
+  };
 };
