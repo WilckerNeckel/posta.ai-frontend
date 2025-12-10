@@ -11,6 +11,7 @@ export interface Column {
   color: string;
   disciplineColumn?: boolean;
   order?: number;
+  userId?: string;
 }
 
 export interface Task {

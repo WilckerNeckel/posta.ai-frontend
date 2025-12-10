@@ -752,6 +752,52 @@ export const boardsReducer = createSlice({
       state.filteredTasks = [];
       state.isFiltered = false;
     },
+    addTaskFromSocketReducer: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        id: string;
+        titulo: string;
+        descricao: string;
+        columnId: string;
+        disciplineId?: string;
+        disciplineName?: string;
+      }>
+    ) => {
+      if (!state.activeBoard) return;
+      // evita duplicar se já existe
+      const existing = state.activeBoard.columns.some((col) =>
+        col.tasks.some((task) => task.id === payload.id)
+      );
+      if (existing) return;
+
+      let column = state.activeBoard.columns.find(
+        (col) => col.id === payload.columnId
+      );
+
+      if (!column && payload.disciplineName) {
+        const disciplineName = payload.disciplineName.toLowerCase().trim();
+        column = state.activeBoard.columns.find(
+          (col) =>
+            col.disciplineColumn &&
+            col.name.toLowerCase().trim() === disciplineName
+        );
+      }
+      if (!column) return;
+      const task: Task = {
+        id: payload.id,
+        title: payload.titulo,
+        description: payload.descricao,
+        status: payload.columnId,
+        subtasks: [],
+      };
+      column.tasks.push(task);
+      state.boards.forEach((board) => {
+        if (board.id !== state.activeBoard?.id) return;
+        board.columns = state.activeBoard.columns;
+      });
+    },
   },
   
   // ============================================
@@ -1085,5 +1131,16 @@ export const {
   setTaskStatusWithDrag,
   filterTasks,
   clearFilter,
-  addNewColumn
+  addNewColumn,
+  addTaskFromSocketReducer,
 } = boardsReducer.actions;
+
+export const addTaskFromSocket = (taskDTO: {
+  id: string;
+  titulo: string;
+  descricao: string;
+  columnId: string;
+}) => ({
+  type: "boards/addTaskFromSocket",
+  payload: taskDTO,
+});

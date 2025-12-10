@@ -306,6 +306,7 @@ export class BoardsService {
         tasks: [],
         disciplineColumn: newColumnDTO.disciplineColumn,
         order: newColumnDTO.ordem,
+        userId: newColumnDTO.userId,
         color: "",
       };
     } catch (error) {
@@ -547,6 +548,7 @@ export class BoardsService {
     const columns: Column[] = sortedColumns.map((column, columnIndex) => ({
       id: column.id,
       name: column.titulo,
+      userId: column.userId,
       disciplineColumn: column.disciplineColumn,
       color: getColorByIndex(columnIndex),
       tasks: this.mapTasks(column.tasks, column.id),

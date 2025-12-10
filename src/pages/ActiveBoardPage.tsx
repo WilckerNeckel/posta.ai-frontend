@@ -30,6 +30,7 @@ import {
   deleteColumnAsync,
   moveTaskToColumnAsync,
   teacherDeleteTaskAsync,
+  addTaskFromSocketReducer,
 } from "../redux/reducers/boards/boards.reducer";
 import {
   setIsNewBoardModalEditMode,
@@ -44,6 +45,7 @@ import { UserService } from "../services/userService";
 import { DisciplineService } from "../services/disciplineService";
 import { DisciplineDTO } from "../backend/discipline/DisciplineApi";
 import { UserDTO } from "../backend/user/UserApi";
+import { connectSocket } from "../backend/websocket/socketClient";
 
 const ColumnsContainer = styled(Box)(({ theme }) => ({
   height: "100%",
@@ -277,7 +279,39 @@ export const ActiveBoardPage = () => {
       .catch((err) => {
         console.error("Erro ao carregar disciplinas do usuário:", err);
       });
+
   }, []);
+
+  useEffect(() => {
+    const socket = connectSocket();
+    const handler = (payload: any) => {
+      // Evita duplicar no professor: não processa se a coluna pertence ao usuário atual
+      const columnOwnerIsCurrent =
+        activeBoard?.columns.some(
+          (col) =>
+            col.id === payload.columnId && col.userId === currentUser?.id
+        ) ?? false;
+
+      if (columnOwnerIsCurrent) return;
+
+      dispatch(
+        addTaskFromSocketReducer({
+          id: payload.id,
+          titulo: payload.titulo,
+          descricao: payload.descricao,
+          columnId: payload.columnId,
+          disciplineId: payload.disciplineId,
+          disciplineName: payload.disciplineName,
+        })
+      );
+    };
+
+    socket.on("DISCIPLINE_TASK_CREATED", handler);
+
+    return () => {
+      socket.off("DISCIPLINE_TASK_CREATED", handler);
+    };
+  }, [dispatch, activeBoard?.columns, currentUser?.id]);
 
   const disciplineMapByName = useMemo(() => {
     const map = new Map<string, DisciplineDTO>();
