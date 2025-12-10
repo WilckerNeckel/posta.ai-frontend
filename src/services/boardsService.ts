@@ -191,6 +191,39 @@ export class BoardsService {
     }
   }
 
+  static async teacherUpdateTask(
+    taskData: UpdateTaskBody & { disciplineId: string }
+  ): Promise<void> {
+    try {
+      const boardApi = new BoardApi();
+      const payload = {
+        disciplineId: taskData.disciplineId,
+        titulo: taskData.title,
+        descricao: taskData.description,
+      };
+      await boardApi.teacherUpdateTask(taskData.id, payload);
+    } catch (error) {
+      console.error('❌ Erro ao atualizar task de disciplina (professor):', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
+  static async teacherDeleteTask(taskId: string, disciplineId: string): Promise<void> {
+    try {
+      const boardApi = new BoardApi();
+      await boardApi.teacherDeleteTask(taskId, disciplineId);
+    } catch (error) {
+      console.error('❌ Erro ao deletar task de disciplina (professor):', error);
+      if (error instanceof ApiError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
   static async updateTask(taskData: UpdateTaskBody): Promise<Task> {
     try {
       const boardApi = new BoardApi();

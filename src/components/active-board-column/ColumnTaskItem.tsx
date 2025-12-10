@@ -7,12 +7,16 @@ import { setActiveTask } from "../../redux/reducers/boards/boards.reducer";
 import { useAppDispatch } from "../../redux/store/store";
 import { palette } from "../../themes/jsonTheme";
 import brownPin from "../../assets/brown-pin.png";
-import { setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
+import { setSelectedNewTaskColumnId, setSelectedNewTaskDisciplineId, setSelectedNewTaskIsTeacherDiscipline, setShowNewTaskModal } from "../../redux/reducers/ui/ui.reducer";
+import { Column } from "../../config/interfaces/board.interface";
 
 interface Props {
     task: Task;
     index: number;
     isDiscipline?: boolean;
+    column: Column;
+    canManageDiscipline?: boolean;
+    disciplineId?: string;
 }
 
 export const CustomPaper = styled(Paper)(({ theme }) => ({
@@ -27,7 +31,14 @@ export const CustomPaper = styled(Paper)(({ theme }) => ({
     },
 }));
 
-export const ColumnTaskItem = ({ task, index, isDiscipline = false }: Props) => {
+export const ColumnTaskItem = ({
+    task,
+    index,
+    isDiscipline = false,
+    column,
+    canManageDiscipline = false,
+    disciplineId,
+}: Props) => {
     const subtasksCompleted = useMemo(
         () => task.subtasks.filter((subtask) => subtask.isCompleted).length,
         [task.subtasks]
@@ -37,6 +48,17 @@ export const ColumnTaskItem = ({ task, index, isDiscipline = false }: Props) => 
 
     const handleTaskClick = () => {
         if (isDiscipline) return;
+        dispatch(setSelectedNewTaskColumnId(column.id));
+        dispatch(
+            setSelectedNewTaskDisciplineId(
+                column.disciplineColumn ? disciplineId ?? null : null
+            )
+        );
+        dispatch(
+            setSelectedNewTaskIsTeacherDiscipline(
+                Boolean(column.disciplineColumn && canManageDiscipline)
+            )
+        );
         dispatch(setActiveTask(task));
         dispatch(setShowNewTaskModal(true));
     };

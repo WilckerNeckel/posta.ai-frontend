@@ -6,6 +6,7 @@ import {
   createTaskAsync,
   updateTaskAsync,
   teacherPostTaskAsync,
+  teacherUpdateTaskAsync,
 } from "../../redux/reducers/boards/boards.reducer";
 import { CreateTaskBody } from "../../redux/reducers/boards/request.interfaces";
 import { UpdateTaskBody } from "../../redux/reducers/boards/request.interfaces";
@@ -103,15 +104,25 @@ export const useNewTaskForm = ({
       })
     );
 
-    await dispatch(
-      updateTaskAsync({
-        subtasks,
-        id: activeTask.id,
-        columnId: data.columnId,
-        title: data.title,
-        description: data.description,
-      })
-    );
+    const payload: UpdateTaskBody = {
+      subtasks,
+      id: activeTask.id,
+      columnId: data.columnId,
+      title: data.title,
+      description: data.description,
+    };
+
+    if (isTeacherDisciplineColumn && teacherDisciplineId) {
+      await dispatch(
+        teacherUpdateTaskAsync({
+          ...payload,
+          disciplineId: teacherDisciplineId,
+        })
+      );
+      return;
+    }
+
+    await dispatch(updateTaskAsync(payload));
   };
 
   const onSubmit = (data: NewTaskFormSchema) =>

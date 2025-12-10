@@ -29,6 +29,7 @@ import {
   setActiveTask,
   deleteColumnAsync,
   moveTaskToColumnAsync,
+  teacherDeleteTaskAsync,
 } from "../redux/reducers/boards/boards.reducer";
 import {
   setIsNewBoardModalEditMode,
@@ -148,6 +149,29 @@ export const ActiveBoardPage = () => {
     const destColumn = activeBoard.columns.find(
       (col) => col.id === destination.droppableId
     );
+    if (destination.droppableId.startsWith("delete-")) {
+      const deleteColumnId = destination.droppableId.replace("delete-", "");
+      const deleteColumn =
+        activeBoard.columns.find((col) => col.id === deleteColumnId) ||
+        sourceColumn;
+      if (deleteColumn?.disciplineColumn && !canManageDisciplineColumn(deleteColumn)) return;
+
+      if (deleteColumn?.disciplineColumn) {
+        const disciplineId = getDisciplineIdForColumn(deleteColumn);
+        if (!disciplineId) return;
+        dispatch(
+          teacherDeleteTaskAsync({
+            taskId: draggableId,
+            disciplineId,
+          })
+        );
+      } else {
+        dispatch(deleteTaskAsync(draggableId));
+      }
+      dispatch(setActiveTask(null));
+      return;
+    }
+
     const canManageSource = sourceColumn
       ? canManageDisciplineColumn(sourceColumn)
       : false;
@@ -157,17 +181,6 @@ export const ActiveBoardPage = () => {
 
     // Bloqueia se envolve disciplina e o usuário não pode gerenciar
     if (involvesDiscipline && (!canManageSource || !canManageDest)) return;
-
-    if (destination.droppableId.startsWith("delete-")) {
-      const deleteColumnId = destination.droppableId.replace("delete-", "");
-      const deleteColumn = activeBoard.columns.find(
-        (col) => col.id === deleteColumnId
-      );
-      if (deleteColumn?.disciplineColumn && !canManageDisciplineColumn(deleteColumn)) return;
-      dispatch(deleteTaskAsync(draggableId));
-      dispatch(setActiveTask(null));
-      return;
-    }
 
     if (
       destination.index === source.index &&
@@ -280,6 +293,7 @@ export const ActiveBoardPage = () => {
     if (currentUser?.role !== "professor") return false;
     const d = disciplineMapByName.get(column.name.toLowerCase().trim());
     console.log("discipline for column", d)
+    console.log("can manage?", d && d.professorId === currentUser?.id)
     return Boolean(d && d.professorId === currentUser?.id);
   };
 

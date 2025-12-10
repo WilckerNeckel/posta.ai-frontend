@@ -17,7 +17,6 @@ import {
   Task,
 } from "../../../config/interfaces/board.interface";
 import { arrayInsert } from "../../../helpers/arrayInsert";
-import { getColorByIndex } from "../../../helpers/getColumnColor";
 import {
   CreateBoardBody,
   CreateTaskBody,
@@ -195,6 +194,40 @@ export const moveTaskToColumnAsync = createAsyncThunk(
       return { taskId, targetColumnId, newPosition };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Erro ao mover task';
+      return rejectWithValue(message);
+    }
+  }
+);
+
+export const teacherUpdateTaskAsync = createAsyncThunk(
+  'boards/teacherUpdateTaskAsync',
+  async (
+    taskData: UpdateTaskBody & { disciplineId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      await BoardsService.teacherUpdateTask(taskData);
+      return taskData;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Erro ao atualizar task de disciplina';
+      return rejectWithValue(message);
+    }
+  }
+);
+
+export const teacherDeleteTaskAsync = createAsyncThunk(
+  'boards/teacherDeleteTaskAsync',
+  async (
+    { taskId, disciplineId }: { taskId: string; disciplineId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      await BoardsService.teacherDeleteTask(taskId, disciplineId);
+      return { taskId };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Erro ao deletar task de disciplina';
       return rejectWithValue(message);
     }
   }
@@ -872,6 +905,42 @@ export const boardsReducer = createSlice({
           if (board.id !== state.activeBoard?.id) return;
           board.columns = state.activeBoard.columns;
         });
+      })
+      .addCase(teacherUpdateTaskAsync.rejected, (state, action) => {
+        console.error('Erro ao atualizar task de disciplina (professor):', action.payload);
+      })
+      .addCase(teacherUpdateTaskAsync.fulfilled, (state, action) => {
+        if (!state.activeBoard) return;
+        const { id, title, description, columnId } = action.payload;
+
+        const column = state.activeBoard.columns.find(
+          (col) => col.id === columnId
+        );
+        if (!column) return;
+
+        const task = column.tasks.find((t) => t.id === id);
+        if (!task) return;
+
+        task.title = title;
+        task.description = description || "";
+
+        if (state.activeTask?.id === id) {
+          state.activeTask = { ...task };
+        }
+      })
+      .addCase(teacherDeleteTaskAsync.rejected, (state, action) => {
+        console.error('Erro ao deletar task de disciplina (professor):', action.payload);
+      })
+      .addCase(teacherDeleteTaskAsync.fulfilled, (state, action) => {
+        if (!state.activeBoard) return;
+        state.activeBoard.columns = state.activeBoard.columns.map((column) => ({
+          ...column,
+          tasks: column.tasks.filter((task) => task.id !== action.payload.taskId),
+        }));
+
+        if (state.activeTask?.id === action.payload.taskId) {
+          state.activeTask = null;
+        }
       })
       // ✅ MOVE COLUMN ORDER (BACKEND)
       .addCase(moveColumnOrderAsync.rejected, (state, action) => {

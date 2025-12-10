@@ -122,6 +122,9 @@ export const ActiveBoardColumn = ({
                                                 column.disciplineColumn &&
                                                 !canManageDiscipline
                                             }
+                                            column={column}
+                                            canManageDiscipline={canManageDiscipline}
+                                            disciplineId={disciplineId}
                                         />
                                     )}
                                 />

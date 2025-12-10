@@ -56,6 +56,26 @@ export class BoardApi {
         );
     }
 
+    async teacherUpdateTask(
+        taskId: string,
+        payload: { disciplineId: string; titulo?: string; descricao?: string }
+    ): Promise<void> {
+        await this.httpClient.patch<typeof payload, void>(
+            `/board/task/${taskId}/teacher`,
+            payload,
+            this.getAuthHeaders()
+        );
+    }
+
+    async teacherDeleteTask(taskId: string, disciplineId: string): Promise<void> {
+        await this.httpClient.delete<void>(
+            `/board/task/${taskId}/teacher?disciplineId=${encodeURIComponent(
+                disciplineId
+            )}`,
+            this.getAuthHeaders()
+        );
+    }
+
     async moveTask(taskId: string, novaPosicao: number): Promise<void> {
         await this.httpClient.patch<{ novaPosicao: number }, void>(
             `/board/task/${taskId}/move`,

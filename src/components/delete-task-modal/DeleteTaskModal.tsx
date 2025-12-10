@@ -4,10 +4,11 @@ import { useSelector } from "react-redux";
 import {
   deleteTaskAsync,
   setActiveTask,
+  teacherDeleteTaskAsync,
 } from "../../redux/reducers/boards/boards.reducer";
 import { selectActiveBoard, selectActiveTask } from "../../redux/reducers/boards/boards.selector";
 import { setShowDeleteTaskModal } from "../../redux/reducers/ui/ui.reducer";
-import { selectShowDeleteTaskModal } from "../../redux/reducers/ui/ui.selector";
+import { selectSelectedNewTaskDisciplineId, selectSelectedNewTaskIsTeacherDiscipline, selectShowDeleteTaskModal } from "../../redux/reducers/ui/ui.selector";
 import { useAppDispatch } from "../../redux/store/store";
 import { BaseModal } from "../base-modal/BaseModal";
 import { Toast } from "../ui/toast/Toast";
@@ -22,6 +23,8 @@ export const DeleteTaskModal = () => {
     (col) => col.id === activeTask?.status
   );
   const isDisciplineTask = Boolean(activeTaskColumn?.disciplineColumn);
+  const teacherDisciplineId = useSelector(selectSelectedNewTaskDisciplineId);
+  const isTeacherDiscipline = useSelector(selectSelectedNewTaskIsTeacherDiscipline);
 
   const dispatch = useAppDispatch();
 
@@ -30,9 +33,11 @@ export const DeleteTaskModal = () => {
   };
 
   const onDeleteTask = async () => {
-    if (!activeTask || isDisciplineTask) return;
+    if (!activeTask) return;
     setIsDeleting(true);
-    const result = await dispatch(deleteTaskAsync(activeTask.id));
+    const result = isTeacherDiscipline && teacherDisciplineId
+      ? await dispatch(teacherDeleteTaskAsync({ taskId: activeTask.id, disciplineId: teacherDisciplineId }))
+      : await dispatch(deleteTaskAsync(activeTask.id));
     setIsDeleting(false);
 
     if (deleteTaskAsync.fulfilled.match(result)) {
@@ -48,7 +53,7 @@ export const DeleteTaskModal = () => {
         <Typography variant="h6" fontWeight={700} color="error">
           Delete this task?
         </Typography>
-        {isDisciplineTask && (
+        {isDisciplineTask && !isTeacherDiscipline && (
           <Typography variant="body2" color="error" fontWeight={600}>
             Tarefas de disciplina são protegidas e não podem ser removidas.
           </Typography>
@@ -69,7 +74,7 @@ export const DeleteTaskModal = () => {
             color="error"
             variant="contained"
             onClick={onDeleteTask}
-            disabled={isDeleting || isDisciplineTask}
+            disabled={isDeleting || (isDisciplineTask && !isTeacherDiscipline)}
           >
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>
